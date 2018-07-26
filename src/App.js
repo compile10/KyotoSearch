@@ -1,42 +1,45 @@
 import React, { Component } from 'react';
 import './App.css';
-
- class App extends Component{
-  constructor(props){
-    super(props);
-    this.state = {
-      tag: ''
-    }
-  }
-
-  setTag(tag){
-    this.setState({
-      tag: tag
-    })
-  }
-
-  render(){
-    const hide = {
-      display: "none"
-    }
-    const show = {
-      fontStyle: 'italic',
-      textAlign: 'center',
-      paddingTop: '80px',
-    }
-    return(
-    <div className="App">
-       <Tagbar onClick={(tag) => this.setTag(tag)}/> 
-       
-       <h1 style={this.state.tag ? hide : show}> Enter a tag to search for images. </h1>
-
-       
-    </div>
+/*
+function Thumbnail(prop){
+  const imgstyle= { 
+    maxWidth: '150px',
+    maxHeight: '200px',
     
-    )
   }
+    return(
+      <div>
+      <a href={prop.url}><img style={imgstyle} src={prop.thumb}/></a> 
+      </div> 
+    )
 
 }
+
+function Row(prop){
+return(
+  <div className="row">
+    <div className="col"><Thumbnail/></div>
+
+  </div>
+)
+}
+
+class thumbgrid extends Component{
+
+
+
+  render(){
+    let rows = [];
+    for( let i = 0; i < 10; i++){
+      rows.push( <Row imageData={props.ImageData} key={i}/>)
+    }
+    return(
+      <div> {rows} </div>
+    )
+  }
+}
+*/
+
 
 class Tagbar extends Component{
   constructor(props){
@@ -66,7 +69,7 @@ class Tagbar extends Component{
        <div className="row justify-content-center">
         <div className ="col-3">
          <form>
-           <input type="text" class="form-control" placeholder="Search Tags" value={this.state.inputvalue} onChange={this.handleChange } onKeyPress={this.enterKey} />
+           <input type="text" className="form-control" placeholder="Search Tags" value={this.state.inputvalue} onChange={this.handleChange } onKeyPress={this.enterKey} />
         </form>
         </div>
         <div className="col-1">
@@ -76,6 +79,63 @@ class Tagbar extends Component{
       </div>
     )
   }
+}
+
+
+
+
+
+class App extends Component{
+  constructor(props){
+    super(props);
+    this.state = {
+      tag: ''
+    }
+    this.fetchImgs = this.fetchImgs.bind(this);
+  }
+
+  setTag(tag){
+    this.setState({
+      tag: tag
+    })
+  }
+  fetchImgs(tag){
+    const Url=`https://gelbooru.com/index.php?page=dapi&s=post&q=index&limit=10&tags=${tag}&json=1`
+    
+ 
+
+    fetch(Url)
+    .then((Data) => {return Data.json()})
+    .then((Data) => {console.log(Data[0])})
+
+    
+  
+  }
+  render(){
+    const hide = {
+      display: 'none'
+    }
+    const show = {
+      fontStyle: 'italic',
+      textAlign: 'center',
+      paddingTop: '80px',
+    }
+    if(this.state.tag){
+      this.fetchImgs(this.state.tag);
+    }
+    
+    return(
+    <div className="App">
+       <Tagbar onClick={(tag) => this.setTag(tag)}/> 
+       
+       <h1 style={this.state.tag ? hide : show}> Enter a tag to search for images. </h1>
+       
+       
+    </div>
+    
+    )
+  }
+
 }
 
 export default App;

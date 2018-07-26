@@ -51,7 +51,7 @@ class Tagbar extends Component{
         </form>
         </div>
         <div className="col-1">
-        <button type="button" className="btn btn-primary" onClick={() => this.props.onClick(this.state.inputvalue)}>>Search</button>
+        <button type="button" className="btn btn-primary" onClick={() => this.props.onClick(this.state.inputvalue)}>Search</button>
         </div>
         </div>
       </div>

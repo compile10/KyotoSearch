@@ -17,7 +17,7 @@ import './App.css';
 
   render(){
     const hide = {
-      visibility: 'hidden'
+      display: "none"
     }
     const show = {
       fontStyle: 'italic',

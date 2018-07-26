@@ -16,10 +16,21 @@ import './App.css';
   }
 
   render(){
+    const hide = {
+      visibility: 'hidden'
+    }
+    const show = {
+      fontStyle: 'italic',
+      textAlign: 'center',
+      paddingTop: '80px',
+    }
     return(
     <div className="App">
        <Tagbar onClick={(tag) => this.setTag(tag)}/> 
-       <p>{this.state.tag}</p>
+       
+       <h1 style={this.state.tag ? hide : show}> Enter a tag to search for images. </h1>
+
+       
     </div>
     
     )
@@ -34,11 +45,19 @@ class Tagbar extends Component{
       inputvalue: ''
     }
     this.handleChange = this.handleChange.bind(this);
+    this.enterKey = this.enterKey.bind(this);
   }
   handleChange(event){
     this.setState({
       inputvalue: event.target.value,
     })
+  }
+
+  enterKey(event){
+    if (event.target.type !== 'textarea' && event.which === 13 /* Enter */) {
+      event.preventDefault();
+      this.props.onClick(this.state.inputvalue); 
+}
   }
 
   render(){
@@ -47,7 +66,7 @@ class Tagbar extends Component{
        <div className="row justify-content-center">
         <div className ="col-3">
          <form>
-           <input type="text" class="form-control" placeholder="Search Tags" value={this.state.inputvalue} onChange={this.handleChange}/>
+           <input type="text" class="form-control" placeholder="Search Tags" value={this.state.inputvalue} onChange={this.handleChange } onKeyPress={this.enterKey} />
         </form>
         </div>
         <div className="col-1">

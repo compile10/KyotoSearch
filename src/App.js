@@ -35,17 +35,19 @@ class Thumbnail extends React.Component {
 }
 
 function Row(prop){
-  let newRow = [];
+ /*let newRow = [];
   for( let i = 0; i < 10; i++){
     if(this.props.imageDataArray.length !== 0){
-     newRow.push( <Thumbnail imageData={this.props.imageArrayData.shift()} key={i}/>)
+     newRow.push( <Thumbnail imageData={this.props.imageDataArray.shift()} key={i}/>)
     }
-  }
-  return(
+  }*/
+  console.log(this.props.imageDataArray)
+  /*return(
     <div className="row">
       {newRow} 
     </div>
-  )
+  )*/
+  return(<div> Loaded </div>)
 }
 
 
@@ -54,20 +56,17 @@ class Thumbgrid extends Component{
   constructor(props){
     super(props);
     this.state = {
-      loading: true, 
-      imageDataArray: [{}]
+      imageDataArray: []
     }
   }
 
-  componentWillMount(){
+  componentDidMount(){
     const Url = `/api/images/${this.props.service}/?tags=${this.props.tag}`
 
     return fetch(Url)
-      .then((stream) => {return stream.json()})
-      .then((data) => {return data} )
-      .then((data) => { this.setState({
+      .then(stream =>  stream.json())
+      .then(data => { this.setState({
           imageDataArray: data,
-          loading: false
       }) })
 
   }
@@ -75,14 +74,15 @@ class Thumbgrid extends Component{
   
 
   render(){
-      if(this.state.loading === false){
-        let rows = [];
-        let arrayCopy = this.imageDataArray; 
+      if(this.state.imageDataArray.length !== 0){
+       let rows = [];
+        let arrayCopy = JSON.parse(JSON.stringify(this.state.imageDataArray))
+
         for( let i = 0; i < 10; i++){
-          rows.push( <Row imageDataArray={arrayCopy} key={i}/>)
-        }
-        return(
-          <div> {rows} </div>
+          rows.push( <Row imageDataArray={this.state.imageDataArray} key={i}/>)
+        } 
+        return(          
+           <div> {rows} </div>
         )
       }
       else{

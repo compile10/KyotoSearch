@@ -34,20 +34,20 @@ class Thumbnail extends React.Component {
   }
 }
 
-function Row(prop){
- /*let newRow = [];
+function Row(props){
+ let newRow = [];
   for( let i = 0; i < 10; i++){
-    if(this.props.imageDataArray.length !== 0){
-     newRow.push( <Thumbnail imageData={this.props.imageDataArray.shift()} key={i}/>)
+    if(props.imageDataArray.length !== 0){
+     newRow.push( <Thumbnail service="gelbooru" imageData={props.imageDataArray.shift()} key={i}/>)
     }
-  }*/
-  console.log(this.props.imageDataArray)
-  /*return(
+  } 
+  
+  return(
     <div className="row">
       {newRow} 
     </div>
-  )*/
-  return(<div> Loaded </div>)
+
+  )
 }
 
 
@@ -76,13 +76,13 @@ class Thumbgrid extends Component{
   render(){
       if(this.state.imageDataArray.length !== 0){
        let rows = [];
-        let arrayCopy = JSON.parse(JSON.stringify(this.state.imageDataArray))
-
+       let arrayCopy = JSON.parse(JSON.stringify(this.state.imageDataArray))
+        
         for( let i = 0; i < 10; i++){
-          rows.push( <Row imageDataArray={this.state.imageDataArray} key={i}/>)
+          rows.push( <Row imageDataArray={arrayCopy} key={i}/>)
         } 
         return(          
-           <div> {rows} </div>
+        <Row imageDataArray={arrayCopy} />
         )
       }
       else{
@@ -169,15 +169,19 @@ class App extends Component{
       textAlign: 'center',
       paddingTop: '80px',
     }
+    const thumbgrid = {
+      paddingTop: '60px'
+    }
     if(this.state.tag){
 
     }
+
     
     return(
     <div className="container">
        <Tagbar onClick={(tag) => this.setTag(tag)}/> 
        <h1 style={this.state.tag ? hide : show}> Enter a tag to search for images. </h1>
-       { this.state.tag && <Thumbgrid tag={this.state.tag} service="gelbooru"/> }
+       { this.state.tag && <div style={thumbgrid}> <Thumbgrid tag={this.state.tag} service="gelbooru"/> </div> }
     </div>
     
     )

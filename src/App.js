@@ -28,7 +28,7 @@ class Thumbnail extends React.Component {
 
     return(
       <div class="col">
-        <a href={this.props.imageData.file_url}> <img alt="Thumbnail" style={imgstyle} src={this.thumbnailUrl(this.props.imageData)}/> </a> 
+        <a rel="noreferrer" href={this.props.imageData.file_url} > <img alt="Thumbnail" style={imgstyle} src={this.thumbnailUrl(this.props.imageData)}/> </a> 
       </div> 
     )
   }
@@ -61,7 +61,8 @@ class Thumbgrid extends Component{
   }
 
   componentDidMount(){
-    const Url = `/api/images/${this.props.service}/?tags=${this.props.tag}`
+    const escaped_tag = escape(this.props.tag)
+    const Url = `/api/images/${this.props.service}/?tags=${escaped_tag}`
 
     return fetch(Url)
       .then(stream =>  stream.json())

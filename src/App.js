@@ -24,29 +24,19 @@ class Thumbnail extends React.Component {
     const colStyle = {
       textAlign: "center"
     }
+    const aStyle = {
+      height: "200px"
+    }
+
+
 
     return(
-      <div className="col-4 col-lg-2 col-xl" style={colStyle}>
-        <a rel="noreferrer" href={this.props.imageData.file_url} > <img alt="Thumbnail" className="img-fluid" src={this.thumbnailUrl(this.props.imageData)}/> </a> 
+      <div className="col-4 col-sm-3 col-md-2 col-lg-1 img-lg" style={colStyle}>
+        <a className="mb-4 d-block h-100 img-lg" rel="noreferrer" style={aStyle} href={this.props.imageData.file_url} > <img alt="Thumbnail"  className="img-fluid " src={this.thumbnailUrl(this.props.imageData)}/> </a> 
       </div> 
+      
     )
   }
-}
-
-function Row(props){
- let newRow = [];
-  for( let i = 0; i < 10; i++){
-    if(props.imageDataArray.length !== 0){
-     newRow.push( <Thumbnail service="gelbooru" imageData={props.imageDataArray.shift()} key={i}/>)
-    }
-  } 
-  
-  return(
-    <div className="row px-5 py-4">
-      {newRow} 
-    </div>
-
-  )
 }
 
 
@@ -54,19 +44,19 @@ function Row(props){
 function Thumbgrid(props){
 
     let thumbRows = [];
-    let arrayCopy = JSON.parse(JSON.stringify(props.imageData))
         
-    for( let i = 0; i < 10; i++){
-      thumbRows.push( <Row imageDataArray={arrayCopy} key={i}/>)
-    } 
+    for( let i = 0; i < props.imageData.length; i++){
+        thumbRows.push( <Thumbnail service="gelbooru" index={i} imageData={props.imageData[i]} key={props.imageData[i].hash}/> )
+    
+    }     
+     
     return(   
-     <div>       
+     <div className="row px-4 align-items-center">    
       {thumbRows}
      </div>
     )
   
-      
-}
+  }
 
 
 
@@ -174,7 +164,7 @@ class App extends Component{
       <div className="container">
         <Tagbar onClick={(tag) => this.onClick(tag)}/> 
       </div>
-      <div className="container-fluid">
+      <div className="container-fluid ">
          <h1 style={this.state.imageData.length !== 0 ? hide : show}> {text} </h1>
          { this.state.imageData.length !== 0 && <div style={thumbgrid}> <Thumbgrid imageData={this.state.imageData}/> </div> }
          

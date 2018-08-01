@@ -19,16 +19,15 @@ class Thumbnail extends React.Component {
   }
 
   render() {
-   
-    const imgstyle= { 
-      maxWidth: '150px',
-      maxHeight: '200px',
-      
+
+    
+    const colStyle = {
+      textAlign: "center"
     }
 
     return(
-      <div class="col">
-        <a rel="noreferrer" href={this.props.imageData.file_url} > <img alt="Thumbnail" style={imgstyle} src={this.thumbnailUrl(this.props.imageData)}/> </a> 
+      <div className="col-4 col-lg-2 col-xl" style={colStyle}>
+        <a rel="noreferrer" href={this.props.imageData.file_url} > <img alt="Thumbnail" className="img-fluid" src={this.thumbnailUrl(this.props.imageData)}/> </a> 
       </div> 
     )
   }
@@ -43,7 +42,7 @@ function Row(props){
   } 
   
   return(
-    <div className="row">
+    <div className="row px-5 py-4">
       {newRow} 
     </div>
 
@@ -52,53 +51,22 @@ function Row(props){
 
 
 
-class Thumbgrid extends Component{
-  constructor(props){
-    super(props);
-    this.state = {
-      imageDataArray: []
-    }
-  }
+function Thumbgrid(props){
 
-  componentDidMount(){
-    const escaped_tag = escape(this.props.tag)
-    const Url = `/api/images/${this.props.service}/?tags=${escaped_tag}`
-
-    return fetch(Url)
-      .then(stream =>  stream.json())
-      .then(data => { this.setState({
-          imageDataArray: data,
-      }) })
-
-  }
-
-  
-
-  render(){
-      if(this.state.imageDataArray.length !== 0){
-       let rows = [];
-       let arrayCopy = JSON.parse(JSON.stringify(this.state.imageDataArray))
+    let thumbRows = [];
+    let arrayCopy = JSON.parse(JSON.stringify(props.imageData))
         
-        for( let i = 0; i < 10; i++){
-          rows.push( <Row imageDataArray={arrayCopy} key={i}/>)
-        } 
-        return(          
-        <Row imageDataArray={arrayCopy} />
-        )
-      }
-      else{
-        const loadingtext = {
-          fontStyle: 'italic',
-          textAlign: 'center',
-          paddingTop: '80px',
-        }
-        return (
-          <h1 style={loadingtext}> Loading... </h1>
-        )
-      }
+    for( let i = 0; i < 10; i++){
+      thumbRows.push( <Row imageDataArray={arrayCopy} key={i}/>)
+    } 
+    return(   
+     <div>       
+      {thumbRows}
+     </div>
+    )
+  
       
-    }
-  }
+}
 
 
 
@@ -151,14 +119,32 @@ class App extends Component{
   constructor(props){
     super(props);
     this.state = {
-      tag: '',
+      imageData: [],
+      service: 'gelbooru',
+      loading: false
     }
+
   }
 
-  setTag(tag){
-    this.setState({
-      tag: tag
+  onClick(input){
+    this.setState({ 
+      loading: true
     })
+    var tag = escape(input)
+    tag = tag.replace(/ /g , "+");
+    const Url = `/api/images/${this.state.service}/?tags=${tag}`
+
+    return fetch(Url)
+      .then(stream =>  stream.json())
+      .then(data => {
+        console.log(`Loaded data for ${input}`)
+        return data
+      })
+      .then(data => { this.setState({
+          loading: false,
+          imageData: data,
+      }) })
+
   }
 
   render(){
@@ -171,20 +157,29 @@ class App extends Component{
       paddingTop: '80px',
     }
     const thumbgrid = {
-      paddingTop: '60px'
+      padding: "60px 0 60px 0"
+       
     }
-    if(this.state.tag){
-
+    let text 
+    if(this.state.loading === true){
+      text = 'Loading...'
+    }
+    else{
+      text = 'Enter tags to search for images.'
     }
 
     
     return(
-    <div className="container">
-       <Tagbar onClick={(tag) => this.setTag(tag)}/> 
-       <h1 style={this.state.tag ? hide : show}> Enter a tag to search for images. </h1>
-       { this.state.tag && <div style={thumbgrid}> <Thumbgrid tag={this.state.tag} service="gelbooru"/> </div> }
+    <div>
+      <div className="container">
+        <Tagbar onClick={(tag) => this.onClick(tag)}/> 
+      </div>
+      <div className="container-fluid">
+         <h1 style={this.state.imageData.length !== 0 ? hide : show}> {text} </h1>
+         { this.state.imageData.length !== 0 && <div style={thumbgrid}> <Thumbgrid imageData={this.state.imageData}/> </div> }
+         
+      </div>
     </div>
-    
     )
   }
 

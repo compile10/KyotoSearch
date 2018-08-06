@@ -28,11 +28,12 @@ class Thumbnail extends React.Component {
       height: "200px"
     }
 
-
+    
+    
 
     return(
-      <div className="col-4 col-sm-3 col-md-2 col-lg-1 img-lg" style={colStyle}>
-        <a className="mb-4 d-block h-100 img-lg" rel="noreferrer" style={aStyle} href={this.props.imageData.file_url} > <img alt="Thumbnail"  className="img-fluid " src={this.thumbnailUrl(this.props.imageData)}/> </a> 
+      <div className="col-4 col-sm-3 col-md-2 col-lg-1 col-xl-1 img-lg" style={colStyle}>
+        <a className="mb-4 d-block h-100" rel="noreferrer" target="_blank" style={aStyle} href={this.props.imageData.file_url} > <img alt="Thumbnail"  className="img-fluid " src={this.thumbnailUrl(this.props.imageData)}/> </a> 
       </div> 
       
     )
@@ -47,11 +48,13 @@ function Thumbgrid(props){
         
     for( let i = 0; i < props.imageData.length; i++){
         thumbRows.push( <Thumbnail service="gelbooru" index={i} imageData={props.imageData[i]} key={props.imageData[i].hash}/> )
+      
     
     }     
-     
+
     return(   
-     <div className="row px-4 align-items-center">    
+    
+     <div className="row  align-items-center" >    
       {thumbRows}
      </div>
     )
@@ -87,12 +90,12 @@ class Tagbar extends Component{
     return(
       <div className="Tagbar" >
        <div className="row justify-content-center">
-        <div className ="col-3">
+        <div className ="col-lg-4 col-md-5 col-9">
          <form>
            <input type="text" className="form-control" placeholder="Search Tags" value={this.state.inputvalue} onChange={this.handleChange } onKeyPress={this.enterKey} />
         </form>
         </div>
-        <div className="col-1">
+        <div className="col-lg-1 col-md-1 col-1">
         <button type="button" className="btn btn-primary" onClick={() => this.props.onClick(this.state.inputvalue)}>Search</button>
         </div>
         </div>
@@ -157,14 +160,13 @@ class App extends Component{
     else{
       text = 'Enter tags to search for images.'
     }
-
-    
+  
     return(
     <div>
       <div className="container">
         <Tagbar onClick={(tag) => this.onClick(tag)}/> 
       </div>
-      <div className="container-fluid ">
+      <div className="container-fluid gridStyle">
          <h1 style={this.state.imageData.length !== 0 ? hide : show}> {text} </h1>
          { this.state.imageData.length !== 0 && <div style={thumbgrid}> <Thumbgrid imageData={this.state.imageData}/> </div> }
          

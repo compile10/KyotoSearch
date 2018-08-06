@@ -1,5 +1,18 @@
-@media screen and (min-width: 992px) {
-    .img-lg {
-      min-width: 190px 
-    }
+@media screen and (min-width: 1480px) {
+  .img-lg {
+    min-width: 10%
   }
+  .gridStyle {
+    width: 96%
+  } 
+} 
+
+
+@media screen and (max-width: 1480px) and (min-width: 992px) {
+  .img-lg {
+    min-width: 12.5%
+  }
+  .gridStyle {
+    width: 96%
+  } 
+} 

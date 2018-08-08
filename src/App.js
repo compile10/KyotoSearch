@@ -1,26 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
 
-class Thumbnail extends React.Component {
-  constructor(props) {
-    super(props)
-    this.thumbnailUrl = this.thumbnailUrl.bind(this)
-  }
-
-  thumbnailUrl(imageobj){
-    let url = ''
-    if(this.props.service === "gelbooru"){
-       url = `https://simg3.gelbooru.com/thumbnails/${imageobj.directory}/thumbnail_${imageobj.hash}.jpg`
-    }
-    else{
-      return
-    }
-    return url
-  }
-
-  render() {
-
-    
+function Thumbnail(props){
     const colStyle = {
       textAlign: "center"
     }
@@ -28,32 +9,26 @@ class Thumbnail extends React.Component {
       height: "200px"
     }
 
-    
-    
-
     return(
       <div className="col-4 col-sm-3 col-md-2 col-lg-1 col-xl-1 img-lg" style={colStyle}>
-        <a className="mb-4 d-block h-100" rel="noreferrer" target="_blank" style={aStyle} href={this.props.imageData.file_url} > <img alt="Thumbnail"  className="img-fluid " src={this.thumbnailUrl(this.props.imageData)}/> </a> 
+        <a className="mb-4 d-block h-100" rel="noreferrer" target="_blank" style={aStyle} href={props.imageData.pageURL} > <img alt="Thumbnail"  className="img-fluid " src={props.imageData.thumbURL}/> </a> 
       </div> 
       
     )
-  }
+  
 }
 
 
 
-function Thumbgrid(props){
 
+function Thumbgrid(props){
     let thumbRows = [];
         
     for( let i = 0; i < props.imageData.length; i++){
         thumbRows.push( <Thumbnail service="gelbooru" index={i} imageData={props.imageData[i]} key={props.imageData[i].hash}/> )
-      
-    
     }     
 
     return(   
-    
      <div className="row  align-items-center" >    
       {thumbRows}
      </div>
@@ -106,8 +81,7 @@ class Tagbar extends Component{
 
 
 
-
-
+//TODO Add URL properties for tags
 class App extends Component{
   constructor(props){
     super(props);

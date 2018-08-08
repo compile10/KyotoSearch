@@ -6,6 +6,21 @@ const port = process.env.PORT || 5000;
 
 
 
+
+function parseGelbooru(data){
+    let frontData = [];
+    for(let thisImage of data){
+      frontData.push({ 
+        thumbURL: `https://simg3.gelbooru.com/thumbnails/${thisImage.directory}/thumbnail_${thisImage.hash}.jpg`,
+        pageURL: `https://gelbooru.com/index.php?page=post&s=view&id=${thisImage.id}`
+      });
+    }
+    return JSON.stringify(frontData);
+}
+
+
+
+
 app.get('/api/images/:service/', (req, res) => {
   console.log(`Recieved image GET request for ${req.query.tags}`);
 
@@ -16,7 +31,7 @@ app.get('/api/images/:service/', (req, res) => {
 
   fetch(url)
   .then((Data) => {return Data.json()})
-  .then((Data) => {res.send(Data)})
+  .then((Data) => { res.send(parseGelbooru(Data)) })
 
 
 });

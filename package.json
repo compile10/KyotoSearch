@@ -11,7 +11,8 @@
     "popper.js": "^1.14.3",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",
-    "react-scripts": "1.1.4"
+    "react-scripts": "1.1.4",
+    "xml2js": "^0.4.19"
   },
   "scripts": {
     "startreact": "react-scripts start",

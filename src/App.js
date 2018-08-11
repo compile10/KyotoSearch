@@ -36,6 +36,24 @@ function Thumbgrid(props){
   
   }
 
+class Pagination extends Component{
+  constructor(props){
+    super(props);
+    this.range = this.range.bind(this);
+  }
+  range(top){
+    let range = []
+    for(let i = 1; i <= top; i++ ){
+      range.push(i);
+    }
+    return range; 
+  }
+  render(){
+
+  }
+
+}
+
 
 
 
@@ -57,7 +75,7 @@ class Tagbar extends Component{
   enterKey(event){
     if (event.target.type !== 'textarea' && event.which === 13 /* Enter */) {
       event.preventDefault();
-      this.props.onClick(this.state.inputvalue); 
+      this.props.onClick(this.state.inputvalue, 1); 
 }
   }
 
@@ -71,7 +89,7 @@ class Tagbar extends Component{
         </form>
         </div>
         <div className="col-lg-1 col-md-1 col-1">
-        <button type="button" className="btn btn-primary" onClick={() => this.props.onClick(this.state.inputvalue)}>Search</button>
+        <button type="button" className="btn btn-primary" onClick={() => this.props.onClick(this.state.inputvalue, 1)}>Search</button>
         </div>
         </div>
       </div>
@@ -93,13 +111,13 @@ class App extends Component{
 
   }
 
-  onClick(input){
+  onClick(input, page){
     this.setState({ 
       loading: true
     })
     var tag = escape(input)
     tag = tag.replace(/ /g , "+");
-    const Url = `/api/images/${this.state.service}/?tags=${tag}`
+    const Url = `/api/images/${this.state.service}/?tags=${tag}&page=${page}`
 
     return fetch(Url)
       .then(stream =>  stream.json())
@@ -121,10 +139,10 @@ class App extends Component{
     const show = {
       fontStyle: 'italic',
       textAlign: 'center',
-      paddingTop: '80px',
+      paddingTop: '60px',
     }
     const thumbgrid = {
-      padding: "60px 0 60px 0"
+      padding: "50px 0 60px 0"
        
     }
     let text 
@@ -142,7 +160,7 @@ class App extends Component{
       </div>
       <div className="container-fluid gridStyle">
          <h1 style={this.state.imageData.length !== 0 ? hide : show}> {text} </h1>
-         { this.state.imageData.length !== 0 && <div style={thumbgrid}> <Thumbgrid imageData={this.state.imageData}/> </div> }
+         { this.state.imageData.length !== 0 && <div style={thumbgrid}> <Thumbgrid imageData={this.state.imageData.imageArray}/> </div> }
          
       </div>
     </div>

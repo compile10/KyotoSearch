@@ -10,25 +10,29 @@ const port = process.env.PORT || 5000;
 
 
 function parseGelbooru(data){
-    let frontData = [];
+    let images = [];
     for(let thisImage of data.posts.post){
-      frontData.push({ 
+      images.push({ 
         thumbURL: thisImage.$.preview_url,
         pageURL: `https://gelbooru.com/index.php?page=post&s=view&id=${thisImage.$.id}`
       });
     }
-    return JSON.stringify(frontData);
+    parsedResult = {
+        totalPages: data.posts.$.count,
+        imageArray: images
+    }
+    return JSON.stringify(parsedResult);
 }
 
 
 
-
-app.get('/api/images/:service/', (req, res) => {
+//expects service to be a string with the name of the service, tags to be the tags with '+' seperating them, and page to be the page number starting at 1
+app.get('/api/images/:service/', (req, res) => { 
   console.log(`Recieved image GET request for ${req.query.tags}`);
 
   let url = '';
-  if(req.params.service == "gelbooru"){
-    url = `https://gelbooru.com/index.php?page=dapi&s=post&q=index&limit=100&tags=${req.query.tags}`
+  if(req.params.service == "gelbooru"){ 
+    url = `https://gelbooru.com/index.php?page=dapi&s=post&q=index&limit=100&tags=${req.query.tags}&pid=${req.query.page - 1}`
   }
 
   
@@ -36,8 +40,8 @@ app.get('/api/images/:service/', (req, res) => {
   .then( (Data) => {return Data.text()} )
   .then((Data) => {
     parseString(Data, (err, result) => {
-      var parsedData = parseGelbooru(result)
-      res.send(parsedData)
+      var parsedResult = parseGelbooru(result)
+      res.send(parsedResult)
     })
   })
 

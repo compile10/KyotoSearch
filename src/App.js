@@ -61,7 +61,7 @@ class Pagination extends Component{
     if(currentPage < 3){
       leftOverflow = false
     }
-    if(currentPage < totalPages - 3){
+    if(currentPage > totalPages - 3){
       rightOverflow = false
     }
 
@@ -191,7 +191,8 @@ class App extends Component{
       imageData: [],
       totalImages: 0,
       service: 'gelbooru',
-      currentPage: 1
+      currentPage: 1,
+      tags: ''
     }
 
   }
@@ -212,7 +213,8 @@ class App extends Component{
       .then(data => { this.setState({
           imageData: data.imageArray,
           totalImages: data.totalImages,
-          currentPage: page
+          currentPage: page,
+          tags: input
       }) })
 
   }
@@ -250,7 +252,7 @@ class App extends Component{
       <div className="container-fluid gridStyle">
          <h1 style={this.state.imageData.length !== 0 ? hide : show}> {text} </h1>
          { this.state.imageData.length !== 0 && <div style={thumbgrid}> <Thumbgrid imageData={this.state.imageData}/> </div> }
-         { this.state.totalImages !== 0 && <div style={paginationStyle}> <Pagination totalImages={this.state.totalImages} onClick={(tag, page) => this.onClick(tag, page)} currentPage={this.state.currentPage}/> </div>} 
+         { this.state.totalImages !== 0 && <div style={paginationStyle}> <Pagination totalImages={this.state.totalImages} tags={this.state.tags} onClick={(tag, page) => this.onClick(tag, page)} currentPage={this.state.currentPage}/> </div>} 
          
       </div>
     </div>

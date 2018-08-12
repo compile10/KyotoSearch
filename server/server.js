@@ -38,6 +38,7 @@ app.get('/api/images/:service/', (req, res) => {
   
   fetch(url)
   .then( (Data) => {return Data.text()} )
+  .catch(() => {console.log(`Failed to fetch ${req.query.tags} on page ${req.query.page - 1}`)})
   .then((Data) => {
     parseString(Data, (err, result) => {
       var parsedResult = parseGelbooru(result)

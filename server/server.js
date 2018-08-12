@@ -18,7 +18,7 @@ function parseGelbooru(data){
       });
     }
     parsedResult = {
-        totalPages: data.posts.$.count,
+        totalImages: data.posts.$.count,
         imageArray: images
     }
     return JSON.stringify(parsedResult);

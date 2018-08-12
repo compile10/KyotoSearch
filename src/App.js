@@ -66,6 +66,11 @@ class Pagination extends Component{
       rightOverflow = false
     }
 
+    if(totalPages <= 7 ){
+      rightOverflow = false
+      leftOverflow = false
+    }
+
     let pageNums = []
 
     switch(true){

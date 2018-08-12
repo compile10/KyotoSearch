@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
+import Eclipse from './Eclipse';
 
 const LEFT_PAGE = -1; 
 const RIGHT_PAGE = -2; 
@@ -82,7 +83,7 @@ class Pagination extends Component{
         pageNums = pageNums.concat(this.range(totalPages - 7, totalPages)); 
         break;
       default:
-        pageNums = this.range(1,7)
+        pageNums = this.range(1,totalPages)
     }
 
     return pageNums; 
@@ -198,8 +199,13 @@ class App extends Component{
 
   }
 
+  //TODO: add error handling for bad fetch
   onClick(input, page){
-    this.setState({loading: true})
+    this.setState({
+      tags: input,
+      currentPage: page,
+      loading: true
+    })
     var tag = escape(input)
     tag = tag.replace(/ /g , "+");
     const Url = `/api/images/${this.state.service}/?tags=${tag}&page=${page}`
@@ -215,8 +221,6 @@ class App extends Component{
       .then(data => { this.setState({
           imageData: data.imageArray,
           totalImages: data.totalImages,
-          currentPage: page,
-          tags: input,
           loading: false
       }) })
 
@@ -229,7 +233,7 @@ class App extends Component{
     const show = {
       fontStyle: 'italic',
       textAlign: 'center',
-      paddingTop: '60px',
+      padding: '60px 0 60px 0',
     }
     const thumbgrid = {
       padding: "50px 0 45px 0"
@@ -237,13 +241,12 @@ class App extends Component{
     const paginationStyle = {
       paddingBottom: "30px"
     }
-    let text 
-    if(this.state.loading === true){
-      text = 'Loading...'
+    const eclipseStyle = {
+      textAlign: "center",
+      marginTop: "80px"
     }
-    else{
-      text = 'Enter tags to search for images.'
-    }
+
+    let text = 'Enter tags to search for images.'
   
     const loaded = !this.state.loading;
 
@@ -253,7 +256,8 @@ class App extends Component{
         <Tagbar onClick={(tag, page) => this.onClick(tag, page)}/> 
       </div>
       <div className="container-fluid gridStyle">
-         <h1 style={this.state.imageData.length !== 0 && loaded ? hide : show}> {text} </h1>
+         <h1 style={this.state.tags === '' ? show : hide}> {text} </h1>
+         {this.state.loading && <div style={eclipseStyle}> <Eclipse/> </div>}
          { this.state.imageData.length !== 0 && loaded && <div style={thumbgrid}> <Thumbgrid imageData={this.state.imageData}/> </div> }
          { this.state.totalImages !== 0 && loaded && <div style={paginationStyle}> <Pagination totalImages={this.state.totalImages} tags={this.state.tags} onClick={(tag, page) => this.onClick(tag, page)} currentPage={this.state.currentPage}/> </div>} 
          

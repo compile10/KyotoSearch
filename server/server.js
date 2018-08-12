@@ -28,7 +28,7 @@ function parseGelbooru(data){
 
 //expects service to be a string with the name of the service, tags to be the tags with '+' seperating them, and page to be the page number starting at 1
 app.get('/api/images/:service/', (req, res) => { 
-  console.log(`Recieved image GET request for ${req.query.tags}`);
+  console.log(`Recieved image GET request for ${req.query.tags} on page ${req.query.page}`);
 
   let url = '';
   if(req.params.service == "gelbooru"){ 
@@ -38,7 +38,7 @@ app.get('/api/images/:service/', (req, res) => {
   
   fetch(url)
   .then( (Data) => {return Data.text()} )
-  .catch(() => {console.log(`Failed to fetch ${req.query.tags} on page ${req.query.page - 1}`)})
+  .catch(() => {console.log(`Failed to fetch ${req.query.tags} on page ${req.query.page}`)})
   .then((Data) => {
     parseString(Data, (err, result) => {
       var parsedResult = parseGelbooru(result)

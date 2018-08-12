@@ -28,7 +28,7 @@ function Thumbgrid(props){
     let thumbRows = [];
         
     for( let i = 0; i < props.imageData.length; i++){
-        thumbRows.push( <Thumbnail service="gelbooru" index={i} imageData={props.imageData[i]} key={props.imageData[i].hash}/> )
+        thumbRows.push( <Thumbnail service="gelbooru" index={i} imageData={props.imageData[i]} key={i}/> )
     }     
 
     return(   
@@ -58,7 +58,7 @@ class Pagination extends Component{
     let leftOverflow = true
     let rightOverflow = true
 
-    if(currentPage < 3){
+    if(currentPage <= 3){
       leftOverflow = false
     }
     if(currentPage > totalPages - 3){
@@ -70,7 +70,7 @@ class Pagination extends Component{
     switch(true){
       case (leftOverflow && rightOverflow):
         pageNums.push(LEFT_PAGE)
-        pageNums.concat(this.range(currentPage - 3, currentPage + 3)) 
+        pageNums = pageNums.concat(this.range(currentPage - 3, currentPage + 3))   
         pageNums.push(RIGHT_PAGE)
         break; 
       case (!leftOverflow && rightOverflow):
@@ -79,7 +79,7 @@ class Pagination extends Component{
         break;
       case (leftOverflow && !rightOverflow):
         pageNums.push(LEFT_PAGE) 
-        pageNums.concat(this.range(totalPages - 7, totalPages)); 
+        pageNums = pageNums.concat(this.range(totalPages - 7, totalPages)); 
         break;
       default:
         pageNums = this.range(1,7)
@@ -89,37 +89,37 @@ class Pagination extends Component{
   }
 
   render(){
-    let totalPages = this.props.totalImages/100;
+    let totalPages = Math.floor(this.props.totalImages/100);
     totalPages = this.props.totalImages % 100 !== 0 ? totalPages + 1 : totalPages;
-
     let pageNums = this.pageNumbers(this.props.currentPage, totalPages)
+
     const paginationArray = pageNums.map( (i) => {
       switch(i){
         case this.props.currentPage:
           return (
             <li className="page-item active" key={i}>
-              <button type="button"  class="page-link" onClick={() => this.props.onClick(this.props.tags, i) }> {i} </button>
+              <button type="button"  className="page-link" onClick={() => this.props.onClick(this.props.tags, i) }> {i} </button>
             </li>
           )
         
         case LEFT_PAGE:
           return(
             <li className="page-item" key={LEFT_PAGE}>
-              <button type="button" class="page-link" onClick={() => this.props.onClick(this.props.tags, 1) }>&laquo; </button>
+              <button type="button" className="page-link" onClick={() => this.props.onClick(this.props.tags, 1) }>&laquo; </button>
             </li>
           )
         
         case RIGHT_PAGE:
           return(
             <li className="page-item" key={RIGHT_PAGE}>
-              <button type="button" class="page-link" onClick={() => this.props.onClick(this.props.tags, totalPages)}> &raquo; </button>
+              <button type="button" className="page-link" onClick={() => this.props.onClick(this.props.tags, totalPages)}> &raquo; </button>
             </li>
           )
          
         default: 
           return(
             <li className="page-item" key={i}> 
-              <button type="button" class="page-link" onClick={() => this.props.onClick(this.props.tags, i)}>{i}</button> 
+              <button type="button" className="page-link" onClick={() => this.props.onClick(this.props.tags, i)}>{i}</button> 
             </li>
           )
     }
@@ -192,12 +192,14 @@ class App extends Component{
       totalImages: 0,
       service: 'gelbooru',
       currentPage: 1,
-      tags: ''
+      tags: '',
+      loading: false
     }
 
   }
 
   onClick(input, page){
+    this.setState({loading: true})
     var tag = escape(input)
     tag = tag.replace(/ /g , "+");
     const Url = `/api/images/${this.state.service}/?tags=${tag}&page=${page}`
@@ -214,7 +216,8 @@ class App extends Component{
           imageData: data.imageArray,
           totalImages: data.totalImages,
           currentPage: page,
-          tags: input
+          tags: input,
+          loading: false
       }) })
 
   }
@@ -242,7 +245,7 @@ class App extends Component{
       text = 'Enter tags to search for images.'
     }
   
-
+    const loaded = !this.state.loading;
 
     return(
     <div>
@@ -250,9 +253,9 @@ class App extends Component{
         <Tagbar onClick={(tag, page) => this.onClick(tag, page)}/> 
       </div>
       <div className="container-fluid gridStyle">
-         <h1 style={this.state.imageData.length !== 0 ? hide : show}> {text} </h1>
-         { this.state.imageData.length !== 0 && <div style={thumbgrid}> <Thumbgrid imageData={this.state.imageData}/> </div> }
-         { this.state.totalImages !== 0 && <div style={paginationStyle}> <Pagination totalImages={this.state.totalImages} tags={this.state.tags} onClick={(tag, page) => this.onClick(tag, page)} currentPage={this.state.currentPage}/> </div>} 
+         <h1 style={this.state.imageData.length !== 0 && loaded ? hide : show}> {text} </h1>
+         { this.state.imageData.length !== 0 && loaded && <div style={thumbgrid}> <Thumbgrid imageData={this.state.imageData}/> </div> }
+         { this.state.totalImages !== 0 && loaded && <div style={paginationStyle}> <Pagination totalImages={this.state.totalImages} tags={this.state.tags} onClick={(tag, page) => this.onClick(tag, page)} currentPage={this.state.currentPage}/> </div>} 
          
       </div>
     </div>

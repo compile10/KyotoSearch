@@ -126,9 +126,13 @@ class Pagination extends Component{
     })
 
     return(
-        <ul className="pagination">
-          {paginationArray}
-        </ul>
+      <div className="row justify-content-center">
+        <div className="col-lg-2 col-md-5 col-8">
+          <ul className="pagination">
+            {paginationArray}
+          </ul>
+        </div>
+      </div>
     )
   }
 
@@ -223,8 +227,10 @@ class App extends Component{
       paddingTop: '60px',
     }
     const thumbgrid = {
-      padding: "50px 0 60px 0"
-       
+      padding: "50px 0 45px 0"
+    }
+    const paginationStyle = {
+      paddingBottom: "30px"
     }
     let text 
     if(this.state.loading === true){
@@ -244,7 +250,7 @@ class App extends Component{
       <div className="container-fluid gridStyle">
          <h1 style={this.state.imageData.length !== 0 ? hide : show}> {text} </h1>
          { this.state.imageData.length !== 0 && <div style={thumbgrid}> <Thumbgrid imageData={this.state.imageData}/> </div> }
-         { this.state.totalImages !== 0 && <div> <Pagination totalImages={this.state.totalImages} onClick={(tag, page) => this.onClick(tag, page)} currentPage={this.state.currentPage}/> </div>} 
+         { this.state.totalImages !== 0 && <div style={paginationStyle}> <Pagination totalImages={this.state.totalImages} onClick={(tag, page) => this.onClick(tag, page)} currentPage={this.state.currentPage}/> </div>} 
          
       </div>
     </div>

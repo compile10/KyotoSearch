@@ -199,7 +199,6 @@ class App extends Component{
 
   }
 
-  //TODO: add error handling for bad fetch
   onClick(input, page){
     this.setState({
       tags: input,
@@ -218,15 +217,27 @@ class App extends Component{
         console.log(`Loaded data for ${input}`)
         return data
       })
-      .then(data => { this.setState({
+      .then(data => {
+        if(data.totalImages === 0){
+          this.setState({
+            loading: false,
+            totalImages: 0,
+            imageData: []
+          })
+        }
+        else{
+         this.setState({
           imageData: data.imageArray,
           totalImages: data.totalImages,
           loading: false
-      }) })
+        })
+      }
+     })
 
   }
 
   render(){
+
     const hide = {
       display: 'none'
     }
@@ -246,8 +257,15 @@ class App extends Component{
       marginTop: "80px"
     }
 
-    let text = 'Enter tags to search for images.'
-  
+    //Changes text to error message only if tags were inputed
+    let text = ''
+    if(this.state.tags === ''){
+       text = 'Enter tags to search for images.'
+    }
+    else{
+      text = `Failed to find any images under tags: "${this.state.tags}".`
+    }
+
     const loaded = !this.state.loading;
 
     return(
@@ -256,8 +274,12 @@ class App extends Component{
         <Tagbar onClick={(tag, page) => this.onClick(tag, page)}/> 
       </div>
       <div className="container-fluid gridStyle">
-         <h1 style={this.state.tags === '' ? show : hide}> {text} </h1>
+          {/* This text only displays when there are no images and no GET requests are occurring*/}
+         <h1 style={this.state.totalImages === 0 && loaded ? show : hide}> {text} </h1>
+
          {this.state.loading && <div style={eclipseStyle}> <Eclipse/> </div>}
+
+         {/* Loads thumbnail grid and pagination only when Image Data available and no GET requests are occurring*/}
          { this.state.imageData.length !== 0 && loaded && <div style={thumbgrid}> <Thumbgrid imageData={this.state.imageData}/> </div> }
          { this.state.totalImages !== 0 && loaded && <div style={paginationStyle}> <Pagination totalImages={this.state.totalImages} tags={this.state.tags} onClick={(tag, page) => this.onClick(tag, page)} currentPage={this.state.currentPage}/> </div>} 
          

@@ -18,7 +18,7 @@ function parseGelbooru(data){
       });
     }
     parsedResult = {
-        totalImages: data.posts.$.count,
+        totalImages: parseInt(data.posts.$.count),
         imageArray: images
     }
     return JSON.stringify(parsedResult);
@@ -41,8 +41,16 @@ app.get('/api/images/:service/', (req, res) => {
   .catch(() => {console.log(`Failed to fetch ${req.query.tags} on page ${req.query.page}`)})
   .then((Data) => {
     parseString(Data, (err, result) => {
-      var parsedResult = parseGelbooru(result)
-      res.send(parsedResult)
+      if(result.posts.$.count === "0"){
+        const noResult = {
+          totalImages: 0
+        }
+        res.send(noResult)
+      }
+      else{
+        var parsedResult = parseGelbooru(result)
+        res.send(parsedResult)
+      }
     })
   })
 

@@ -133,8 +133,8 @@ class Pagination extends Component{
 
     return(
       <div className="row justify-content-center">
-        <div className="col-lg-2 col-md-5 col-8">
-          <ul className="pagination">
+        <div className="col-lg-2 d-flex col-md-5 col-sm-8">
+          <ul className="pagination mx-auto">
             {paginationArray}
           </ul>
         </div>

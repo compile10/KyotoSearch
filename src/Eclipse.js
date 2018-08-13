@@ -10,10 +10,10 @@ class Eclipse extends Component{
         const outStyle = {
             display: "inline-block"
         }
-        
+
         return(
-            <div style={outStyle} class="lds-css ng-scope">
-                <div style={eclipseStyle} class="lds-eclipse">
+            <div style={outStyle} className="lds-css ng-scope">
+                <div style={eclipseStyle} className="lds-eclipse">
                     <div>
                     </div>
                 </div>

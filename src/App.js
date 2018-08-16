@@ -37,7 +37,7 @@ class Thumbgrid extends React.Component {
  componentDidMount(){
   
   document.title = `${this.props.tags} - waifuSearch`
-  const params = new URLSearchParams(this.props.location.search) //?tags=tag1...
+  const params = new URLSearchParams(this.props.location.search) //?tags=tag1+tag2+...
   if(this.props.tags === ''){
     this.urlEntry(params.get("tags"))
   }
@@ -81,17 +81,24 @@ function Home(props){
     textAlign: "center",
     marginTop: "80px"
   }
+
+  const queryTags = props.tags.replace(/ /g , "+");
+
   return(
     <div>
       <h1 style={props.totalImages === 0 && !props.loading ? show : hide}> {text} </h1>
       {props.loading && <div style={eclipseStyle}> <Eclipse/> </div>}
+      {!props.loading && props.totalImages !== 0 && <Redirect to={ `/s/${props.service}/?tags=${queryTags}` }/>}
     </div>
   )
   
 }
 
 
-//TODO Add URL properties for tags
+//TODO: update navbar with URL
+//TODO: add error code for bad URLS (with redirect in grid?)
+//TODO: rewrite search so it updates the page
+
 class App extends Component{
   constructor(props){
     super(props);
@@ -152,6 +159,7 @@ class App extends Component{
       paddingBottom: "30px"
     }
    
+    
     return(
     <Router>
       <div>
@@ -175,13 +183,9 @@ class App extends Component{
           )
           } />
 
-          <Route exact path="/" render={() => (
-          this.state.imageData.length === 0 ? (
-            <Home loading={this.state.loading} totalImages={this.state.totalImages} tags={this.state.tags}/>
-          ) : (
-            <Redirect to={ `/s/${this.state.service}/?tags=${this.state.tags}` }/>
-            )
-          )} />
+          <Route exact path="/" render={() => 
+            <Home loading={this.state.loading} totalImages={this.state.totalImages} tags={this.state.tags} service={this.state.service}/>
+          } />
 
         </div>
       </div>

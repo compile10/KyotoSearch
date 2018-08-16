@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
-import './App.css';
+import { BrowserRouter as Router, Route, Redirect } from "react-router-dom";
+
+
 import { Pagination, Tagbar } from './Navigation.js';
 import Eclipse from './Eclipse';
+import './App.css';
 
 
 
@@ -33,13 +36,42 @@ function Thumbgrid(props){
     }     
 
     return(   
-     <div className="row  align-items-center" >    
+     <div className="row align-items-center" >    
       {thumbRows}
      </div>
     )
   
   }
 
+function Home(props){
+  let text = ''
+  if(props.tags === ''){
+     text = 'Enter tags to search for images.'
+  }
+  else{
+    text = `Failed to find any images under tags: "${props.tags}".`
+  }
+
+  const hide = {
+    display: 'none'
+  }
+  const show = {
+    fontStyle: 'italic',
+    textAlign: 'center',
+    padding: '60px 0 60px 0',
+  }
+  const eclipseStyle = {
+    textAlign: "center",
+    marginTop: "80px"
+  }
+  return(
+    <div>
+      <h1 style={props.totalImages === 0 && !props.loading ? show : hide}> {text} </h1>
+      {props.loading && <div style={eclipseStyle}> <Eclipse/> </div>}
+    </div>
+  )
+  
+}
 
 
 //TODO Add URL properties for tags
@@ -96,53 +128,48 @@ class App extends Component{
 
   render(){
 
-    const hide = {
-      display: 'none'
-    }
-    const show = {
-      fontStyle: 'italic',
-      textAlign: 'center',
-      padding: '60px 0 60px 0',
-    }
+  
     const thumbgrid = {
       padding: "50px 0 45px 0"
     }
     const paginationStyle = {
       paddingBottom: "30px"
     }
-    const eclipseStyle = {
-      textAlign: "center",
-      marginTop: "80px"
-    }
+   
 
     //Changes text to error message only if tags were inputed
-    let text = ''
-    if(this.state.tags === ''){
-       text = 'Enter tags to search for images.'
-    }
-    else{
-      text = `Failed to find any images under tags: "${this.state.tags}".`
-    }
 
-    const loaded = !this.state.loading;
+    
 
     return(
-    <div>
-      <div className="container">
-        <Tagbar onClick={(tag, page) => this.onClick(tag, page)}/> 
-      </div>
-      <div className="container-fluid gridStyle">
-          {/* This text only displays when there are no images and no GET requests are occurring*/}
-         <h1 style={this.state.totalImages === 0 && loaded ? show : hide}> {text} </h1>
+    <Router>
+      <div>
+        <div className="container">
+          <Tagbar onClick={(tag, page) => this.onClick(tag, page)}/> 
+        </div>
+        <div className="container-fluid gridStyle">
+        
+            {/* This text only displays when there are no images and no GET requests are occurring*/}
+        
 
-         {this.state.loading && <div style={eclipseStyle}> <Eclipse/> </div>}
+          <Route path="/s/:service" render={() => 
+          <div>
+            <div style={thumbgrid}> <Thumbgrid imageData={this.state.imageData}/> </div> 
+            <div style={paginationStyle}> <Pagination totalImages={this.state.totalImages} tags={this.state.tags} onClick={(tag, page) => this.onClick(tag, page)} currentPage={this.state.currentPage}/> </div>
+          </div>
+          } />
 
-         {/* Loads thumbnail grid and pagination only when Image Data available and no GET requests are occurring*/}
-         { this.state.imageData.length !== 0 && loaded && <div style={thumbgrid}> <Thumbgrid imageData={this.state.imageData}/> </div> }
-         { this.state.totalImages !== 0 && loaded && <div style={paginationStyle}> <Pagination totalImages={this.state.totalImages} tags={this.state.tags} onClick={(tag, page) => this.onClick(tag, page)} currentPage={this.state.currentPage}/> </div>} 
-         
+          <Route exact path="/" render={() => (
+          this.state.imageData.length === 0 ? (
+            <Home loading={this.state.loading} totalImages={this.state.totalImages} tags={this.state.tags}/>
+          ) : (
+            <Redirect to={`/s/${this.state.service}`}/>
+            )
+          )} />
+
+        </div>
       </div>
-    </div>
+    </Router>
     )
   }
 

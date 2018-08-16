@@ -28,20 +28,37 @@ function Thumbnail(props){
 
 
 
-function Thumbgrid(props){
-    let thumbRows = [];
-        
-    for( let i = 0; i < props.imageData.length; i++){
-        thumbRows.push( <Thumbnail service="gelbooru" index={i} imageData={props.imageData[i]} key={i}/> )
-    }     
+class Thumbgrid extends React.Component {
+ constructor(props) {
+  super(props);
+  this.urlEntry = this.props.urlEntry.bind(this)
+ }
 
-    return(   
-     <div className="row align-items-center" >    
-      {thumbRows}
-     </div>
-    )
+ componentDidMount(){
   
+  document.title = `${this.props.tags} - waifuSearch`
+  const params = new URLSearchParams(this.props.location.search) //?tags=tag1...
+  if(this.props.tags === ''){
+    this.urlEntry(params.get("tags"))
   }
+
+
+ }
+ render() {
+
+  let thumbRows = [];
+
+  for( let i = 0; i < this.props.imageData.length; i++){
+      thumbRows.push( <Thumbnail service="gelbooru" index={i} imageData={this.props.imageData[i]} key={i}/> )
+  }
+
+  return(   
+   <div className="row align-items-center" >    
+    {thumbRows}
+   </div>
+  )
+ }
+}
 
 function Home(props){
   let text = ''
@@ -127,7 +144,6 @@ class App extends Component{
   }
 
   render(){
-
   
     const thumbgrid = {
       padding: "50px 0 45px 0"
@@ -136,11 +152,6 @@ class App extends Component{
       paddingBottom: "30px"
     }
    
-
-    //Changes text to error message only if tags were inputed
-
-    
-
     return(
     <Router>
       <div>
@@ -152,18 +163,23 @@ class App extends Component{
             {/* This text only displays when there are no images and no GET requests are occurring*/}
         
 
-          <Route path="/s/:service" render={() => 
+          <Route path="/s/:service" render={({ location }) => 
+          this.state.loading === true ? (
+            <Home loading={this.state.loading} totalImages={this.state.totalImages} tags={this.state.tags}/>
+          ) : (
           <div>
-            <div style={thumbgrid}> <Thumbgrid imageData={this.state.imageData}/> </div> 
-            <div style={paginationStyle}> <Pagination totalImages={this.state.totalImages} tags={this.state.tags} onClick={(tag, page) => this.onClick(tag, page)} currentPage={this.state.currentPage}/> </div>
+            <div style={thumbgrid}> <Thumbgrid imageData={this.state.imageData} urlEntry={(tags) => this.onClick(tags,1)} tags={this.state.tags} location={location}/> </div> 
+            <div style={paginationStyle}> <Pagination totalImages={this.state.totalImages} tags={this.state.tags} 
+            onClick={(tag, page) => this.onClick(tag, page)} currentPage={this.state.currentPage}/> </div>
           </div>
+          )
           } />
 
           <Route exact path="/" render={() => (
           this.state.imageData.length === 0 ? (
             <Home loading={this.state.loading} totalImages={this.state.totalImages} tags={this.state.tags}/>
           ) : (
-            <Redirect to={`/s/${this.state.service}`}/>
+            <Redirect to={ `/s/${this.state.service}/?tags=${this.state.tags}` }/>
             )
           )} />
 

@@ -36,10 +36,19 @@ class Thumbgrid extends React.Component {
 
  componentDidMount(){
   
-  document.title = `${this.props.tags} - waifuSearch`
   const params = new URLSearchParams(this.props.location.search) //?tags=tag1+tag2+...
-  if(this.props.tags === ''){
-    this.urlEntry(params.get("tags"))
+  const titleTags = params.get("tags").replace(/\+/g , ' ');
+
+  document.title = `${titleTags} - waifuSearch`
+
+  //checks if Thumbgrid was loaded in without data. If it was, then grab data from url. If page property is missing then default to page 1.
+  if(this.props.tags === ''){ 
+    let page = params.get("page")
+    if(page === "")
+    {
+      page = 1
+    }
+    this.urlEntry(params.get("tags"), page)
   }
 
 
@@ -61,13 +70,8 @@ class Thumbgrid extends React.Component {
 }
 
 function Home(props){
-  let text = ''
-  if(props.tags === ''){
-     text = 'Enter tags to search for images.'
-  }
-  else{
-    text = `Failed to find any images under tags: "${props.tags}".`
-  }
+  let text = 'Enter tags to search for images.'
+
 
   const hide = {
     display: 'none'
@@ -77,18 +81,15 @@ function Home(props){
     textAlign: 'center',
     padding: '60px 0 60px 0',
   }
-  const eclipseStyle = {
-    textAlign: "center",
-    marginTop: "80px"
-  }
+
 
   const queryTags = props.tags.replace(/ /g , "+");
 
   return(
     <div>
       <h1 style={props.totalImages === 0 && !props.loading ? show : hide}> {text} </h1>
-      {props.loading && <div style={eclipseStyle}> <Eclipse/> </div>}
-      {!props.loading && props.totalImages !== 0 && <Redirect to={ `/s/${props.service}/?tags=${queryTags}` }/>}
+      {props.loading && <div> <Eclipse/> </div>}
+      {!props.loading && props.totalImages !== 0 && <Redirect to={ `/s/${props.service}/?tags=${queryTags}&page=${props.page}` }/>}
     </div>
   )
   
@@ -108,7 +109,8 @@ class App extends Component{
       service: 'gelbooru',
       currentPage: 1,
       tags: '',
-      loading: false
+      loading: false,
+      failed: false
     }
 
   }
@@ -136,6 +138,7 @@ class App extends Component{
           this.setState({
             loading: false,
             totalImages: 0,
+            failed: true,
             imageData: []
           })
         }
@@ -158,6 +161,11 @@ class App extends Component{
     const paginationStyle = {
       paddingBottom: "30px"
     }
+   const failedText = {
+    fontStyle: 'italic',
+    textAlign: 'center',
+    padding: '60px 0 60px 0',
+   }
    
     
     return(
@@ -171,20 +179,18 @@ class App extends Component{
             {/* This text only displays when there are no images and no GET requests are occurring*/}
         
 
-          <Route path="/s/:service" render={({ location }) => 
-          this.state.loading === true ? (
-            <Home loading={this.state.loading} totalImages={this.state.totalImages} tags={this.state.tags}/>
-          ) : (
+          <Route path="/s/:service" render={({ location }) =>       
+        
           <div>
-            <div style={thumbgrid}> <Thumbgrid imageData={this.state.imageData} urlEntry={(tags) => this.onClick(tags,1)} tags={this.state.tags} location={location}/> </div> 
+            <div style={thumbgrid}> <Thumbgrid imageData={this.state.imageData} urlEntry={(tags,page) => this.onClick(tags,page)} tags={this.state.tags} location={location}/> </div> 
             <div style={paginationStyle}> <Pagination totalImages={this.state.totalImages} tags={this.state.tags} 
-            onClick={(tag, page) => this.onClick(tag, page)} currentPage={this.state.currentPage}/> </div>
-          </div>
-          )
-          } />
+            onClick={(tag, page) => this.onClick(tag, page)} loading={this.state.loading} currentPage={this.state.currentPage} service={this.state.service}/> </div>
+            </div>
+      
+           }/>
 
           <Route exact path="/" render={() => 
-            <Home loading={this.state.loading} totalImages={this.state.totalImages} tags={this.state.tags} service={this.state.service}/>
+            <Home loading={this.state.loading} totalImages={this.state.totalImages} tags={this.state.tags} page={this.state.currentPage} service={this.state.service}/>
           } />
 
         </div>

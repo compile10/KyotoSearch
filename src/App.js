@@ -69,31 +69,8 @@ class Thumbgrid extends React.Component {
  }
 }
 
-function Home(props){
-  let text = 'Enter tags to search for images.'
 
 
-  const hide = {
-    display: 'none'
-  }
-  const show = {
-    fontStyle: 'italic',
-    textAlign: 'center',
-    padding: '60px 0 60px 0',
-  }
-
-
-  const queryTags = props.tags.replace(/ /g , "+");
-
-  return(
-    <div>
-      <h1 style={props.totalImages === 0 && !props.loading ? show : hide}> {text} </h1>
-      {props.loading && <div> <Eclipse/> </div>}
-      {!props.loading && props.totalImages !== 0 && <Redirect to={ `/s/${props.service}/?tags=${queryTags}&page=${props.page}` }/>}
-    </div>
-  )
-  
-}
 
 
 //TODO: update navbar with URL
@@ -116,6 +93,8 @@ class App extends Component{
   }
 
   onClick(input, page){
+
+  
     this.setState({
       tags: input,
       currentPage: page,
@@ -161,12 +140,8 @@ class App extends Component{
     const paginationStyle = {
       paddingBottom: "30px"
     }
-   const failedText = {
-    fontStyle: 'italic',
-    textAlign: 'center',
-    padding: '60px 0 60px 0',
-   }
-   
+    
+  
     
     return(
     <Router>
@@ -174,23 +149,28 @@ class App extends Component{
         <div className="container">
           <Tagbar onClick={(tag, page) => this.onClick(tag, page)}/> 
         </div>
-        <div className="container-fluid gridStyle">
-        
-            {/* This text only displays when there are no images and no GET requests are occurring*/}
-        
-
+        <div className="container-fluid gridStyle">        
+          
           <Route path="/s/:service" render={({ location }) =>       
-        
-          <div>
+          ( (this.state.loading) ?
+            ( <div> <Eclipse/> </div> )  :
+          (<div>
             <div style={thumbgrid}> <Thumbgrid imageData={this.state.imageData} urlEntry={(tags,page) => this.onClick(tags,page)} tags={this.state.tags} location={location}/> </div> 
             <div style={paginationStyle}> <Pagination totalImages={this.state.totalImages} tags={this.state.tags} 
-            onClick={(tag, page) => this.onClick(tag, page)} loading={this.state.loading} currentPage={this.state.currentPage} service={this.state.service}/> </div>
-            </div>
-      
+            onClick={(tag, page) => this.onClick(tag, page)}  currentPage={this.state.currentPage} loading={this.state.loading}/> </div>
+            </div> )
+          
+          )
            }/>
 
-          <Route exact path="/" render={() => 
-            <Home loading={this.state.loading} totalImages={this.state.totalImages} tags={this.state.tags} page={this.state.currentPage} service={this.state.service}/>
+          <Route exact path="/" render={() => {
+            return(
+              <div>
+               <h1> Enter tags to search for images. </h1>
+                {this.state.loading && <Redirect to={ `/s/${props.service}/?tags=${queryTags}&page=${props.page}` }/> }
+            </div>
+            )
+          }
           } />
 
         </div>

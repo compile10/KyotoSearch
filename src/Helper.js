@@ -1,7 +1,8 @@
 
 function convertToURI(unescapedTags){
-    var tags = escape(unescapedTags)
-    tags = tags.replace(/ /g , "+");
+    let tags = unescapedTags.replace(/ /g , "+");
+    tags = escape(tags)
+    
     return tags
 }
 

@@ -9,8 +9,6 @@ class Eclipse extends Component{
         }
         const outStyle = {
             display: "inline-block",
-            textAlign: "center",
-            marginTop: "80px"
         }
 
         return(

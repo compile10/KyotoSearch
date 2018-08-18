@@ -1,4 +1,8 @@
 import React, { Component } from 'react';
+import { Redirect } from "react-router-dom";
+import convertToURI from './Helper'
+
+
 
 const LEFT_PAGE = -1; 
 const RIGHT_PAGE = -2; 
@@ -112,7 +116,8 @@ class Pagination extends Component{
     constructor(props){
       super(props);
       this.state = {
-        inputvalue: ''
+        inputvalue: '',
+        click: false,
       }
       this.handleChange = this.handleChange.bind(this);
       this.enterKey = this.enterKey.bind(this);
@@ -127,10 +132,18 @@ class Pagination extends Component{
       if (event.target.type !== 'textarea' && event.which === 13 /* Enter */) {
         event.preventDefault();
         this.props.onClick(this.state.inputvalue, 1); 
+        this.setState({click: true})
   }
+    }
+    componentDidUpdate(){
+      if(this.state.click === true){
+        this.setState({click: false})
+      }
     }
   
     render(){
+     
+
       return(
         <div className="Tagbar" >
          <div className="row justify-content-center">
@@ -140,9 +153,10 @@ class Pagination extends Component{
           </form>
           </div>
           <div className="col-lg-1 col-md-1 col-1">
-          <button type="button" className="btn btn-primary" onClick={() => this.props.onClick(this.state.inputvalue, 1)}>Search</button>
+            <button type="button" className="btn btn-primary" onClick={() => {this.props.onClick(this.state.inputvalue, 1); this.setState({ click: true}) }} >Search</button>
           </div>
           </div>
+          { this.state.click && <Redirect to={`/s/${this.props.service}/?tags=${convertToURI(this.state.inputvalue)}&page=1`} /> }
         </div>
       )
     }

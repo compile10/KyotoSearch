@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Route, Redirect } from "react-router-dom";
 
-
 import { Pagination, Tagbar } from './Navigation.js';
 import Eclipse from './Eclipse';
+import convertToURI from './Helper'
+
 import './App.css';
 
 
@@ -30,17 +31,54 @@ function Thumbnail(props){
 
 class Thumbgrid extends React.Component {
  constructor(props) {
-  super(props);
-  this.urlEntry = this.props.urlEntry.bind(this)
+   super(props);
+   this.state = {
+     loading: true,
+     imageArray: [], 
+     totalImages: 0,
+   }
+  this.callbackGrid = this.props.callbackGrid.bind(this)
+  this.getImages = this.getImages.bind(this)
  }
 
- componentDidMount(){
+ getImages(serviceName, unescapedTags, page){
+  this.setState({
+    loading: true
+  })
+  var tags = convertToURI(unescapedTags)
+  const Url = `/api/images/${serviceName}/?tags=${tags}&page=${page}`
   
+  console.log("Calling GET request.")
+
+  return fetch(Url)
+    .then(stream =>  stream.json())
+    .then(data => {
+      console.log(`Loaded data for ${unescapedTags}`)
+      return data
+    })
+    .then(data => {
+      
+      this.setState({
+        loading: false,
+        totalImages: data.totalImages,
+        imageArray: data.imageArray
+      })
+      this.callbackGrid(data.totalImages, false)
+    })
+   
+
+}
+
+ componentDidMount(){
+  this.callbackGrid([], false)
+
   const params = new URLSearchParams(this.props.location.search) //?tags=tag1+tag2+...
+
+  //gets the title using the url
   const titleTags = params.get("tags").replace(/\+/g , ' ');
 
   document.title = `${titleTags} - waifuSearch`
-
+/*
   //checks if Thumbgrid was loaded in without data. If it was, then grab data from url. If page property is missing then default to page 1.
   if(this.props.tags === ''){ 
     let page = params.get("page")
@@ -48,24 +86,47 @@ class Thumbgrid extends React.Component {
     {
       page = 1
     }
-    this.urlEntry(params.get("tags"), page)
+    this.callbackGrid([], false)
+    this.getImages("gelbooru",params.get("tags"), page)
   }
-
+  
+*/
+  this.callbackGrid([], false)
+  this.getImages(this.props.service,this.props.tags, this.props.page)
 
  }
- render() {
-
-  let thumbRows = [];
-
-  for( let i = 0; i < this.props.imageData.length; i++){
-      thumbRows.push( <Thumbnail service="gelbooru" index={i} imageData={this.props.imageData[i]} key={i}/> )
+ 
+ componentDidUpdate(){
+    if(this.props.update === true){
+      this.callbackGrid([], false)
+      this.getImages(this.props.service, this.props.tags, this.props.page)
+    }
   }
 
-  return(   
-   <div className="row align-items-center" >    
-    {thumbRows}
-   </div>
+ render() {
+   
+  if(this.state.loading === true){
+    const eclipseContainer = {
+      textAlign: "center",
+      marginTop: "80px"
+    }
+    return(
+      <div style={eclipseContainer}>  <Eclipse/> </div>
+    )
+  }
+  else{
+    let thumbRows = [];
+
+    for( let i = 0; i < this.state.imageArray.length; i++){
+        thumbRows.push( <Thumbnail index={i} imageData={this.state.imageArray[i]} key={i}/> )
+    }
+
+    return(   
+    <div className="row align-items-center" >    
+      {thumbRows}
+    </div>
   )
+  }
  }
 }
 
@@ -81,56 +142,33 @@ class App extends Component{
   constructor(props){
     super(props);
     this.state = {
-      imageData: [],
       totalImages: 0,
+      update: false,
       service: 'gelbooru',
       currentPage: 1,
       tags: '',
-      loading: false,
-      failed: false
     }
-
   }
-
-  onClick(input, page){
-
-  
-    this.setState({
-      tags: input,
-      currentPage: page,
-      loading: true
-    })
-    var tag = escape(input)
-    tag = tag.replace(/ /g , "+");
-    const Url = `/api/images/${this.state.service}/?tags=${tag}&page=${page}`
-    
-    console.log("Calling GET request.")
-
-    return fetch(Url)
-      .then(stream =>  stream.json())
-      .then(data => {
-        console.log(`Loaded data for ${input}`)
-        return data
-      })
-      .then(data => {
-        if(data.totalImages === 0){
-          this.setState({
-            loading: false,
-            totalImages: 0,
-            failed: true,
-            imageData: []
-          })
-        }
-        else{
-         this.setState({
-          imageData: data.imageArray,
-          totalImages: data.totalImages,
-          loading: false
-        })
+  onClick(inTags, inPage){
+    this.setState(
+      {
+        tags: inTags,
+        currentPage: inPage,
+        update: true
       }
-     })
-
+    )
   }
+
+  //fix variable names
+  callbackGrid(inTotalImages, inUpdate){
+    this.setState(
+      {
+        totalImages: inTotalImages,
+        update: inUpdate
+      }
+    )
+  }
+  
 
   render(){
   
@@ -147,27 +185,24 @@ class App extends Component{
     <Router>
       <div>
         <div className="container">
-          <Tagbar onClick={(tag, page) => this.onClick(tag, page)}/> 
+          <Tagbar service={this.state.service} onClick={(tag, page) => this.onClick(tag, page)}/> 
         </div>
         <div className="container-fluid gridStyle">        
           
-          <Route path="/s/:service" render={({ location }) =>       
-          ( (this.state.loading) ?
-            ( <div> <Eclipse/> </div> )  :
-          (<div>
-            <div style={thumbgrid}> <Thumbgrid imageData={this.state.imageData} urlEntry={(tags,page) => this.onClick(tags,page)} tags={this.state.tags} location={location}/> </div> 
-            <div style={paginationStyle}> <Pagination totalImages={this.state.totalImages} tags={this.state.tags} 
-            onClick={(tag, page) => this.onClick(tag, page)}  currentPage={this.state.currentPage} loading={this.state.loading}/> </div>
-            </div> )
-          
-          )
-           }/>
+          <Route path="/s/:service" render={({ location }) => { 
+            return(
+            <div>
+              <div style={thumbgrid}> <Thumbgrid imageData={this.state.imageData} update={this.state.update} service={this.state.service} callbackGrid={(x,y) => this.callbackGrid(x,y)} page={this.state.currentPage} tags={this.state.tags} location={location}/> </div> 
+             {/* <div style={paginationStyle}> <Pagination totalImages={this.state.totalImages} tags={this.state.tags} 
+              onClick={(tag, page) => this.onClick(tag, page)}  currentPage={this.state.currentPage} loading={this.state.loading}/> </div> */}
+            </div> 
+            )
+           }}/>
 
           <Route exact path="/" render={() => {
             return(
               <div>
                <h1> Enter tags to search for images. </h1>
-                {this.state.loading && <Redirect to={ `/s/${props.service}/?tags=${queryTags}&page=${props.page}` }/> }
             </div>
             )
           }

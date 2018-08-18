@@ -37,8 +37,9 @@ class Thumbgrid extends React.Component {
      imageArray: [], 
      totalImages: 0,
    }
-  this.callbackGrid = this.props.callbackGrid.bind(this)
+  this.setTotalImages = this.props.setTotalImages.bind(this)
   this.getImages = this.getImages.bind(this)
+  this.setUpdate = this.props.setUpdate.bind(this)
  }
 
  getImages(serviceName, unescapedTags, page){
@@ -63,14 +64,14 @@ class Thumbgrid extends React.Component {
         totalImages: data.totalImages,
         imageArray: data.imageArray
       })
-      this.callbackGrid(data.totalImages, false)
+      this.setTotalImages(data.totalImages)
     })
    
 
 }
 
  componentDidMount(){
-  this.callbackGrid([], false)
+  this.setUpdate(false)
 
   const params = new URLSearchParams(this.props.location.search) //?tags=tag1+tag2+...
 
@@ -78,27 +79,25 @@ class Thumbgrid extends React.Component {
   const titleTags = params.get("tags").replace(/\+/g , ' ');
 
   document.title = `${titleTags} - waifuSearch`
-/*
+
   //checks if Thumbgrid was loaded in without data. If it was, then grab data from url. If page property is missing then default to page 1.
+  
   if(this.props.tags === ''){ 
     let page = params.get("page")
     if(page === "")
     {
       page = 1
     }
-    this.callbackGrid([], false)
     this.getImages("gelbooru",params.get("tags"), page)
   }
-  
-*/
-  this.callbackGrid([], false)
-  this.getImages(this.props.service,this.props.tags, this.props.page)
-
+  else{
+    this.getImages(this.props.service,this.props.tags, this.props.page)
+  }
  }
  
  componentDidUpdate(){
     if(this.props.update === true){
-      this.callbackGrid([], false)
+      this.setUpdate(false)
       this.getImages(this.props.service, this.props.tags, this.props.page)
     }
   }
@@ -160,14 +159,22 @@ class App extends Component{
   }
 
   //fix variable names
-  callbackGrid(inTotalImages, inUpdate){
+  setTotalImages(inTotalImages){
     this.setState(
       {
         totalImages: inTotalImages,
+      }
+    )
+  }
+
+  setUpdate(inUpdate){
+    this.setState(
+      {
         update: inUpdate
       }
     )
   }
+  
   
 
   render(){
@@ -192,7 +199,8 @@ class App extends Component{
           <Route path="/s/:service" render={({ location }) => { 
             return(
             <div>
-              <div style={thumbgrid}> <Thumbgrid imageData={this.state.imageData} update={this.state.update} service={this.state.service} callbackGrid={(x,y) => this.callbackGrid(x,y)} page={this.state.currentPage} tags={this.state.tags} location={location}/> </div> 
+              <div style={thumbgrid}> <Thumbgrid imageData={this.state.imageData} update={this.state.update} service={this.state.service} setTotalImages={(x) => this.setTotalImages(x)} 
+              page={this.state.currentPage} tags={this.state.tags} setUpdate={x => this.setUpdate(x)} location={location}/> </div> 
              {/* <div style={paginationStyle}> <Pagination totalImages={this.state.totalImages} tags={this.state.tags} 
               onClick={(tag, page) => this.onClick(tag, page)}  currentPage={this.state.currentPage} loading={this.state.loading}/> </div> */}
             </div> 

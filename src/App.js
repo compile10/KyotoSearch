@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { BrowserRouter as Router, Route, Redirect } from "react-router-dom";
+import { BrowserRouter as Router, Route } from "react-router-dom";
 
-import { Pagination, Tagbar } from './Navigation.js';
+import { Pagination, Tagbar } from './Navigation';
 import Eclipse from './Eclipse';
 import convertToURI from './Helper'
 

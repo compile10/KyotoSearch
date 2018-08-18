@@ -122,6 +122,10 @@ class Pagination extends Component{
       this.handleChange = this.handleChange.bind(this);
       this.enterKey = this.enterKey.bind(this);
     }
+    setInputvalue(input){
+      this.setState({inputvalue: input})
+    }
+
     handleChange(event){
       this.setState({
         inputvalue: event.target.value,

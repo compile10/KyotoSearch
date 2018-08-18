@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Redirect } from "react-router-dom";
-import convertToURI from './Helper'
+import convertToURI, {convertToTyped} from './Helper'
 
 
 
@@ -142,6 +142,14 @@ class Pagination extends Component{
     componentDidUpdate(){
       if(this.state.click === true){
         this.setState({click: false})
+      }
+    }
+
+    componentDidMount(){
+      const params = new URLSearchParams(window.location.search)
+      if(params.get("tags") !== null){
+        const searchText = convertToTyped(params.get("tags"))
+        this.setState({inputvalue: searchText})
       }
     }
   

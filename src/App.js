@@ -30,70 +30,68 @@ function Thumbnail(props){
 
 
 class Thumbgrid extends React.Component {
- constructor(props) {
-   super(props);
-   this.state = {
-     loading: true,
-     imageArray: [], 
-     totalImages: 0,
-   }
-  this.setTotalImages = this.props.setTotalImages.bind(this)
-  this.getImages = this.getImages.bind(this)
-  this.setUpdate = this.props.setUpdate.bind(this)
- }
-
- getImages(serviceName, unescapedTags, page){
-  this.setState({
-    loading: true
-  })
-  var tags = convertToURI(unescapedTags)
-  const Url = `/api/images/${serviceName}/?tags=${tags}&page=${page}`
-  
-  console.log("Calling GET request.")
-
-  return fetch(Url)
-    .then(stream =>  stream.json())
-    .then(data => {
-      console.log(`Loaded data for ${unescapedTags}`)
-      return data
-    })
-    .then(data => {
-      
-      this.setState({
-        loading: false,
-        totalImages: data.totalImages,
-        imageArray: data.imageArray
-      })
-      this.setTotalImages(data.totalImages)
-    })
-   
-
-}
-
- componentDidMount(){
-  this.setUpdate(false)
-
-  const params = new URLSearchParams(this.props.location.search) //?tags=tag1+tag2+...
-
-  //gets the title using the url
-  const titleTags = params.get("tags").replace(/\+/g , ' ');
-
-  document.title = `${titleTags} - waifuSearch`
-
-  //checks if Thumbgrid was loaded in without data. If it was, then grab data from url. If page property is missing then default to page 1.
-  
-  if(this.props.tags === ''){ 
-    let page = params.get("page")
-    if(page === "")
-    {
-      page = 1
+  constructor(props) {
+    super(props);
+    this.state = {
+      loading: true,
+      imageArray: [], 
+      totalImages: 0,
     }
-    this.getImages("gelbooru",params.get("tags"), page)
+    this.setTotalImages = this.props.setTotalImages.bind(this)
+    this.getImages = this.getImages.bind(this)
+    this.setUpdate = this.props.setUpdate.bind(this)
   }
-  else{
-    this.getImages(this.props.service,this.props.tags, this.props.page)
+
+  getImages(serviceName, unescapedTags, page){
+    this.setState({
+      loading: true
+    })
+    var tags = convertToURI(unescapedTags)
+    const Url = `/api/images/${serviceName}/?tags=${tags}&page=${page}`
+    
+    console.log("Calling GET request.")
+
+    return fetch(Url)
+      .then(stream =>  stream.json())
+      .then(data => {
+        console.log(`Loaded data for ${unescapedTags}`)
+        return data
+      })
+      .then(data => {
+        
+        this.setState({
+          loading: false,
+          totalImages: data.totalImages,
+          imageArray: data.imageArray
+        })
+        this.setTotalImages(data.totalImages)
+      })
   }
- }
+
+  componentDidMount(){
+    this.setUpdate(false)
+
+    const params = new URLSearchParams(this.props.location.search) //?tags=tag1+tag2+...
+
+    //gets the title using the url
+    const titleTags = params.get("tags").replace(/\+/g , ' ');
+
+    document.title = `${titleTags} - waifuSearch`
+
+    //checks if Thumbgrid was loaded in without data. If it was, then grab data from url. If page property is missing then default to page 1.
+    
+    if(this.props.tags === ''){ 
+      let page = params.get("page")
+      if(page === null)
+      {
+        page = 1
+      }
+      this.getImages("gelbooru",params.get("tags"), page)
+    }
+    else{
+      this.getImages(this.props.service,this.props.tags, this.props.page)
+    }
+  }
  
  componentDidUpdate(){
     if(this.props.update === true){

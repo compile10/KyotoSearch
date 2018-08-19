@@ -36,6 +36,7 @@ class Thumbgrid extends React.Component {
       loading: true,
       imageArray: [], 
       totalImages: 0,
+      badTagError: false
     }
     this.setTotalImages = this.props.setTotalImages.bind(this)
     this.getImages = this.getImages.bind(this)
@@ -62,14 +63,22 @@ class Thumbgrid extends React.Component {
         return data
       })
       .then(data => {
-        
-        this.setState({
-          loading: false,
-          totalImages: data.totalImages,
-          imageArray: data.imageArray
-        })
-        this.setTotalImages(data.totalImages)
-        this.setGridLoaded(true)
+        if(data.totalImages === 0){
+          this.setState({
+            badTagError:true,
+            loading: false
+          })
+        }
+        else{
+          this.setState({
+            badTagError: false,
+            loading: false,
+            totalImages: data.totalImages,
+            imageArray: data.imageArray
+          })
+          this.setTotalImages(data.totalImages)
+          this.setGridLoaded(true)
+        } 
       })
   }
 
@@ -80,10 +89,8 @@ class Thumbgrid extends React.Component {
     let tags = params.get("tags")
     let page = parseInt(params.get("page"),10)
 
-    //gets the title using the url
-    const titleTags = tags.replace(/\+/g , ' ');
 
-    document.title = `${titleTags} - waifuSearch`
+    document.title = `${convertToTyped(tags)} - waifuSearch`
 
     //checks if Thumbgrid was loaded in without data. If it was, then grab data from url. If page property is missing then default to page 1.
     
@@ -110,8 +117,10 @@ class Thumbgrid extends React.Component {
     }
  }
  render() {
-   
-  if(this.state.loading === true){
+  if(this.state.badTagError === true && this.state.loading === false){
+    return(<h1>Unable to find images with tags: {this.props.tags}</h1>)
+  }
+  else if(this.state.loading === true){
     const eclipseContainer = {
       textAlign: "center",
       marginTop: "80px"

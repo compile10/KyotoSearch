@@ -1,7 +1,14 @@
 
 function convertToURI(unescapedTags){
-    let tags = unescapedTags.replace(/ /g, "+")
-    tags = escape(tags)
+    let tags = unescapedTags.split(' ')
+    let union = ""
+    for(let tag of tags){
+        if(tag !== ''){
+            union = union.concat(tag, "+")
+        }
+    }
+
+    tags = escape(union.slice(0, union.length-1))
     
     return tags
 }

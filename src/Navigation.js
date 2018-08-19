@@ -69,11 +69,10 @@ class Pagination extends Component{
 
     render(){
     
-      
       let totalPages = Math.floor(this.props.totalImages/100);
       totalPages = this.props.totalImages % 100 !== 0 ? totalPages + 1 : totalPages;
       let pageNums = this.pageNumbers(this.props.currentPage, totalPages)
-  
+
       const paginationArray = pageNums.map( (i) => {
         switch(i){
           case this.props.currentPage:

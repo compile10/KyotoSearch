@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Route } from "react-router-dom";
 
 import { Pagination, Tagbar } from './Navigation';
 import Eclipse from './Eclipse';
-import convertToURI from './Helper'
+import convertToURI, {convertToTyped} from './Helper'
 
 import './App.css';
 
@@ -78,7 +78,7 @@ class Thumbgrid extends React.Component {
 
     const params = new URLSearchParams(this.props.location.search) //?tags=tag1+tag2+...
     let tags = params.get("tags")
-    let page = params.get("page")
+    let page = parseInt(params.get("page"),10)
 
     //gets the title using the url
     const titleTags = tags.replace(/\+/g , ' ');
@@ -93,7 +93,7 @@ class Thumbgrid extends React.Component {
       {
         page = 1
       }
-      this.setMissingState(tags,page)
+      this.setMissingState(convertToTyped(tags),page)
       this.getImages("gelbooru",tags, page)
     }
     else{
@@ -102,12 +102,13 @@ class Thumbgrid extends React.Component {
   }
  
  componentDidUpdate(){
+ 
     if(this.props.update === true){
+      document.title = `${this.props.tags} - waifuSearch`
       this.setUpdate(false)
       this.getImages(this.props.service, this.props.tags, this.props.page)
     }
-  }
-
+ }
  render() {
    
   if(this.state.loading === true){

@@ -5,6 +5,7 @@ import { Pagination, Tagbar } from './Navigation';
 import Eclipse from './Eclipse';
 import convertToURI, {convertToTyped} from './Helper'
 
+import 'animate.css/animate.min.css'
 import './App.css';
 
 
@@ -19,7 +20,7 @@ function Thumbnail(props){
 
     return(
       <div className="col-4 col-sm-3 col-md-2 col-lg-1 col-xl-1 img-lg" style={colStyle}>
-        <a className="mb-4 d-block h-100" rel="noreferrer" target="_blank" style={aStyle} href={props.imageData.pageURL} > <img alt="Thumbnail"  className="img-fluid " src={props.imageData.thumbURL}/> </a> 
+        <a className="mb-4 d-block h-100" rel="noreferrer" target="_blank" style={aStyle} href={props.imageData.pageURL} > <img alt="Thumbnail"  className="img-fluid animated fadeInUp" src={props.imageData.thumbURL}/> </a> 
       </div> 
       
     )

@@ -25,7 +25,7 @@ class Thumbnail extends React.Component{
 
       return(
         <div className="col-4 col-sm-3 col-md-2 col-lg-1 col-xl-1 img-lg" style={colStyle}>
-          <a className="mb-4 d-block h-100" rel="noreferrer" target="_blank" style={aStyle} href={this.props.imageData.pageURL} > <img alt="Thumbnail" onLoad={() => this.props.imageLoaded()} className="img-fluid animated fadeInUp" src={this.props.imageData.thumbURL}/> </a> 
+          <a className="mb-4 d-block h-100" rel="noreferrer" target="_blank" style={aStyle} href={this.props.imageData.pageURL} > <img alt="Thumbnail"  onLoad={() => this.props.imageLoaded()} className="img-fluid animated fadeInUp" src={this.props.imageData.thumbURL}/> </a> 
         </div> 
         
       )
@@ -57,6 +57,7 @@ class Thumbgrid extends React.Component {
     this.setGridLoaded(false)
     this.setState({
       loading: true,
+      imageArray: [],
       imagesLoaded: 0
     })
     var tags = convertToURI(unescapedTags)
@@ -115,16 +116,18 @@ class Thumbgrid extends React.Component {
   }
  
  componentDidUpdate(){
+
+  if(this.props.update === true){
+    document.title = `${this.props.tags} - waifuSearch`
+    this.setUpdate(false)
+    this.getImages(this.props.service, this.props.tags, this.props.page)
+  }
+
    if(this.state.imagesLoaded === this.state.imageArray.length && this.state.loading === true && this.state.imageArray.length !== 0){
      this.setState({loading: false})
      this.setGridLoaded(true)
    }
  
-    if(this.props.update === true){
-      document.title = `${this.props.tags} - waifuSearch`
-      this.setUpdate(false)
-      this.getImages(this.props.service, this.props.tags, this.props.page)
-    }
  }
 
  imageLoaded(){
@@ -215,10 +218,10 @@ class App extends Component{
   render(){
   
     const thumbgrid = {
-      padding: "50px 0 45px 0"
+      padding: "60px 0 80px 0"
     }
     const paginationStyle = {
-      paddingBottom: "30px"
+      paddingBottom: "30px",
     }
     
   

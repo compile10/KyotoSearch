@@ -10,21 +10,26 @@ import './App.css';
 
 
 
-function Thumbnail(props){
-    const colStyle = {
-      textAlign: "center"
+class Thumbnail extends React.Component{
+  constructor(props){
+    super(props);
+    this.imageLoaded = this.props.imageLoaded.bind(this)
     }
-    const aStyle = {
-      height: "200px"
-    }
+  render(){
+      const colStyle = {
+        textAlign: "center"
+      }
+      const aStyle = {
+        height: "200px"
+      }
 
-    return(
-      <div className="col-4 col-sm-3 col-md-2 col-lg-1 col-xl-1 img-lg" style={colStyle}>
-        <a className="mb-4 d-block h-100" rel="noreferrer" target="_blank" style={aStyle} href={props.imageData.pageURL} > <img alt="Thumbnail"  className="img-fluid animated fadeInUp" src={props.imageData.thumbURL}/> </a> 
-      </div> 
-      
-    )
-  
+      return(
+        <div className="col-4 col-sm-3 col-md-2 col-lg-1 col-xl-1 img-lg" style={colStyle}>
+          <a className="mb-4 d-block h-100" rel="noreferrer" target="_blank" style={aStyle} href={this.props.imageData.pageURL} > <img alt="Thumbnail" onLoad={() => this.props.imageLoaded()} className="img-fluid animated fadeInUp" src={this.props.imageData.thumbURL}/> </a> 
+        </div> 
+        
+      )
+  }
 }
 
 
@@ -37,6 +42,7 @@ class Thumbgrid extends React.Component {
       loading: true,
       imageArray: [], 
       totalImages: 0,
+      imagesLoaded: 0,
       badTagError: false
     }
     this.setTotalImages = this.props.setTotalImages.bind(this)
@@ -50,7 +56,8 @@ class Thumbgrid extends React.Component {
   getImages(serviceName, unescapedTags, page){
     this.setGridLoaded(false)
     this.setState({
-      loading: true
+      loading: true,
+      imagesLoaded: 0
     })
     var tags = convertToURI(unescapedTags)
     const Url = `/api/images/${serviceName}/?tags=${tags}&page=${page}`
@@ -73,12 +80,10 @@ class Thumbgrid extends React.Component {
         else{
           this.setState({
             badTagError: false,
-            loading: false,
             totalImages: data.totalImages,
             imageArray: data.imageArray
           })
           this.setTotalImages(data.totalImages)
-          this.setGridLoaded(true)
         } 
       })
   }
@@ -110,6 +115,10 @@ class Thumbgrid extends React.Component {
   }
  
  componentDidUpdate(){
+   if(this.state.imagesLoaded === this.state.imageArray.length && this.state.loading === true && this.state.imageArray.length !== 0){
+     this.setState({loading: false})
+     this.setGridLoaded(true)
+   }
  
     if(this.props.update === true){
       document.title = `${this.props.tags} - waifuSearch`
@@ -117,31 +126,37 @@ class Thumbgrid extends React.Component {
       this.getImages(this.props.service, this.props.tags, this.props.page)
     }
  }
+
+ imageLoaded(){
+   this.setState({imagesLoaded: this.state.imagesLoaded + 1 })
+ }
+
  render() {
   if(this.state.badTagError === true && this.state.loading === false){
     return(<h1>Unable to find images with tags: {this.props.tags}</h1>)
   }
-  else if(this.state.loading === true){
+  else{
     const eclipseContainer = {
       textAlign: "center",
-      marginTop: "80px"
+      marginTop: "40px"
     }
-    return(
-      <div style={eclipseContainer}>  <Eclipse/> </div>
-    )
-  }
-  else{
+    const hidden = { display: "none" }
+    
+
     let thumbRows = [];
 
     for( let i = 0; i < this.state.imageArray.length; i++){
-        thumbRows.push( <Thumbnail index={i} imageData={this.state.imageArray[i]} key={i}/> )
+        thumbRows.push( <Thumbnail index={i} imageLoaded={() => this.imageLoaded()} imageData={this.state.imageArray[i]} key={i}/> )
     }
 
     return(   
-    <div className="row align-items-center" >    
-      {thumbRows}
+    <div>
+      <div className={"row align-items-center"} style={this.state.loading ? hidden : null}  >    
+        {thumbRows}
+      </div>
+      { this.state.loading && <div style={eclipseContainer}>  <Eclipse/> </div> }
     </div>
-  )
+    )
   }
  }
 }

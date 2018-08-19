@@ -10,6 +10,9 @@ const RIGHT_PAGE = -2;
 class Pagination extends Component{
     constructor(props){
       super(props);
+      this.state = {
+        click: false
+      }
       this.range = this.range.bind(this);
       this.pageNumbers = this.pageNumbers.bind(this);
     }
@@ -58,8 +61,15 @@ class Pagination extends Component{
   
       return pageNums; 
     }
-  
+    componentDidUpdate(){
+      if(this.state.click === true){
+        this.setState({click: false})
+      }
+    }
+
     render(){
+    
+      
       let totalPages = Math.floor(this.props.totalImages/100);
       totalPages = this.props.totalImages % 100 !== 0 ? totalPages + 1 : totalPages;
       let pageNums = this.pageNumbers(this.props.currentPage, totalPages)
@@ -69,33 +79,33 @@ class Pagination extends Component{
           case this.props.currentPage:
             return (
               <li className="page-item active" key={i}>
-                <button type="button"  className="page-link" onClick={() => this.props.onClick(this.props.tags, i) }> {i} </button>
+                <button type="button"  className="page-link" onClick={() => {this.props.onClick(this.props.tags, i); this.setState({click: true})}}> {i} </button>
               </li>
             )
           
           case LEFT_PAGE:
             return(
               <li className="page-item" key={LEFT_PAGE}>
-                <button type="button" className="page-link" onClick={() => this.props.onClick(this.props.tags, 1) }>&laquo; </button>
+                <button type="button" className="page-link" onClick={() => {this.props.onClick(this.props.tags, 1); this.setState({click: true})}}>&laquo; </button>
               </li>
             )
           
           case RIGHT_PAGE:
             return(
               <li className="page-item" key={RIGHT_PAGE}>
-                <button type="button" className="page-link" onClick={() => this.props.onClick(this.props.tags, totalPages)}> &raquo; </button>
+                <button type="button" className="page-link" onClick={() => {this.props.onClick(this.props.tags, totalPages); this.setState({click: true})}} > &raquo; </button>
               </li>
             )
            
           default: 
             return(
               <li className="page-item" key={i}> 
-                <button type="button" className="page-link" onClick={() => this.props.onClick(this.props.tags, i)}>{i}</button> 
+                <button type="button" className="page-link" onClick={() => {this.props.onClick(this.props.tags, i); this.setState({click: true})}}>{i}</button> 
               </li>
             )
       }
       })
-  
+    
       return(
         <div className="row justify-content-center">
           <div className="col-lg-2 d-flex col-md-5 col-sm-8">
@@ -103,6 +113,7 @@ class Pagination extends Component{
               {paginationArray}
             </ul>
           </div>
+          { this.state.click && <Redirect to={`/s/${this.props.service}/?tags=${convertToURI(this.props.tags)}&page=${this.props.currentPage}`} /> }
         </div>
       )
     }
@@ -154,23 +165,21 @@ class Pagination extends Component{
     }
   
     render(){
-     
-
-      return(
-        <div className="Tagbar" >
-         <div className="row justify-content-center">
-          <div className ="col-lg-4 col-md-5 col-7">
-           <form>
-             <input type="text" className="form-control" placeholder="Search Tags" value={this.state.inputvalue} onChange={this.handleChange } onKeyPress={this.enterKey} />
-          </form>
+        return(
+          <div className="Tagbar" >
+          <div className="row justify-content-center">
+            <div className ="col-lg-4 col-md-5 col-7">
+            <form>
+              <input type="text" className="form-control" placeholder="Search Tags" value={this.state.inputvalue} onChange={this.handleChange } onKeyPress={this.enterKey} />
+            </form>
+            </div>
+            <div className="col-lg-1 col-md-1 col-1">
+              <button type="button" className="btn btn-primary" onClick={() => {this.props.onClick(this.state.inputvalue, 1); this.setState({ click: true}) }} >Search</button>
+            </div>
+            </div>
+            { this.state.click && <Redirect to={`/s/${this.props.service}/?tags=${convertToURI(this.state.inputvalue)}&page=1`} /> }
           </div>
-          <div className="col-lg-1 col-md-1 col-1">
-            <button type="button" className="btn btn-primary" onClick={() => {this.props.onClick(this.state.inputvalue, 1); this.setState({ click: true}) }} >Search</button>
-          </div>
-          </div>
-          { this.state.click && <Redirect to={`/s/${this.props.service}/?tags=${convertToURI(this.state.inputvalue)}&page=1`} /> }
-        </div>
-      )
+        )
     }
   }
   

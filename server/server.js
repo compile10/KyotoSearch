@@ -21,7 +21,7 @@ function parseGelbooru(data){
         totalImages: parseInt(data.posts.$.count),
         imageArray: images
     }
-    return JSON.stringify(parsedResult);
+    return parsedResult;
 }
 
 

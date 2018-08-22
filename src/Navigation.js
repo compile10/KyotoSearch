@@ -7,7 +7,7 @@ import convertToURI, {convertToTyped} from './Helper'
 const LEFT_PAGE = -1; 
 const RIGHT_PAGE = -2; 
 
-class Pagination extends Component{
+class Pagination extends React.Component{
     constructor(props){
       super(props);
       this.state = {
@@ -122,9 +122,9 @@ class Pagination extends Component{
   
   
   
-  class Tagbar extends Component{
+  class Tagbar extends React.Component{
     constructor(props){
-      super(props);
+      super(props)
       this.state = {
         inputvalue: '',
         click: false,
@@ -182,4 +182,20 @@ class Pagination extends Component{
     }
   }
   
+
+class Dropdown extends React.Component{
+  constructor(props){
+    super(props)
+
+  }
+
+
+  render(){
+
+    return( <div></div> )
+  }
+}
+
+
+
   export {Tagbar, Pagination}

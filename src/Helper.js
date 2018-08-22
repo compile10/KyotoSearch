@@ -1,4 +1,5 @@
 
+
 function convertToURI(unescapedTags){
     let tags = unescapedTags.split(' ')
     let union = ""
@@ -20,5 +21,19 @@ function convertToTyped(escapedTags){
     return tags
 }
 
-export {convertToTyped, convertToURI}
+function lookupSources(code){
+    const sources = ["gelbooru", "danbooru"]
+    return sources[code]
+}
+
+function lookupCode(text){
+    const codes = {
+        "gelbooru": 1,
+        "danbooru": 2
+    }
+    return codes[text]
+}
+
+
+export {convertToTyped, lookupSources, lookupCode, convertToURI}
 export default convertToURI

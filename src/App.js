@@ -25,7 +25,9 @@ class Thumbnail extends React.Component{
 
       return(
         <div className="col-4 col-sm-3 col-md-2 col-lg-1 col-xl-1 img-lg" style={colStyle}>
-          <a className="mb-4 d-block h-100" rel="noreferrer" target="_blank" style={aStyle} href={this.props.imageData.pageURL} > <img alt="Thumbnail"  onLoad={() => this.props.imageLoaded()} className="img-fluid animated fadeInUp" src={this.props.imageData.thumbURL}/> </a> 
+          <a className="mb-4 d-block h-100" rel="noreferrer" target="_blank" style={aStyle} href={this.props.imageData.pageURL} > 
+            <img alt="Thumbnail"  onLoad={() => this.props.imageLoaded()} className="img-fluid animated fadeInUp" src={this.props.imageData.thumbURL}/>
+          </a> 
         </div> 
         
       )
@@ -94,21 +96,22 @@ class Thumbgrid extends React.Component {
 
     const params = new URLSearchParams(this.props.location.search) //?tags=tag1+tag2+...
     let tags = params.get("tags")
-    let page = parseInt(params.get("page"),10)
+    let page = params.get("page")
 
 
     document.title = `${convertToTyped(tags)} - waifuSearch`
 
     //checks if Thumbgrid was loaded in without data. If it was, then grab data from url. If page property is missing then default to page 1.
+    if(page === null)
+    {
+      this.setMissingState('',1)
+    }
+    
     
     if(this.props.tags === ''){ 
-      
-      if(page === null)
-      {
-        page = 1
-      }
+     
       this.setMissingState(convertToTyped(tags),page)
-      this.getImages("gelbooru",tags, page)
+      this.getImages("gelbooru",tags, parseInt(page, 10))
     }
     else{
       this.getImages(this.props.service,this.props.tags, this.props.page)
@@ -238,13 +241,28 @@ class App extends Component{
             return(
             <div>
               <div style={thumbgrid}> 
-                <Thumbgrid imageData={this.state.imageData} update={this.state.update} service={this.state.service} setTotalImages={(x) => this.setTotalImages(x)} 
-                page={this.state.currentPage} tags={this.state.tags} setMissingState={(x,y) => this.setMissingState(x,y)} setGridLoaded={x => this.setGridLoaded(x)} setUpdate={x => this.setUpdate(x)} location={location}/> 
+                <Thumbgrid 
+                imageData={this.state.imageData}
+                update={this.state.update} 
+                service={this.state.service}
+                setTotalImages={(x) => this.setTotalImages(x)} 
+                page={this.state.currentPage} 
+                tags={this.state.tags} 
+                setMissingState={(x,y) => this.setMissingState(x,y)}
+                setGridLoaded={x => this.setGridLoaded(x)} 
+                setUpdate={x => this.setUpdate(x)} location={location}
+                /> 
               </div> 
 
-              { this.state.gridLoaded && <div style={paginationStyle}> 
-                <Pagination totalImages={this.state.totalImages}  tags={this.state.tags} service={this.state.service}
-                onClick={(tags, page) => this.onClick(tags, page)}  currentPage={this.state.currentPage} /> 
+              { this.state.gridLoaded && 
+              <div style={paginationStyle}> 
+                <Pagination 
+                totalImages={this.state.totalImages} 
+                tags={this.state.tags} 
+                service={this.state.service}
+                onClick={(tags, page) => this.onClick(tags, page)}  
+                currentPage={this.state.currentPage} 
+                /> 
               </div> }
             </div> 
             )

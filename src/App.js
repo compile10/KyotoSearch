@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { BrowserRouter as Router, Route } from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 
 import { Pagination, Tagbar } from './Navigation';
 import Eclipse from './Eclipse';
@@ -182,7 +182,11 @@ class Thumbgrid extends React.Component {
  }
 }
 
-
+function noMatch(){
+  return(
+    <h1>404: The page you were looking for was not found.</h1>
+  )
+}
 
 
 
@@ -252,48 +256,51 @@ class App extends Component{
         <div className="container">
           <Tagbar service={this.state.service} onClick={(tag, page) => this.onClick(tag, page)}/> 
         </div>
-        <div className="container-fluid gridStyle">        
+        <div className="container-fluid gridStyle">     
+        <Switch>
           
-          <Route path="/s/:service" render={({ location }) => { 
-            return(
-            <div>
-              <div style={thumbgrid}> 
-                <Thumbgrid 
-                imageData={this.state.imageData}
-                update={this.state.update} 
-                service={this.state.service}
-                setTotalImages={(x) => this.setTotalImages(x)} 
-                page={this.state.currentPage} 
-                tags={this.state.tags} 
-                setTags={(x) => this.setTags(x)}
-                setPage={(x) => this.setPage(x)}
-                setGridLoaded={x => this.setGridLoaded(x)} 
-                setUpdate={x => this.setUpdate(x)} location={location}
-                /> 
-              </div> 
-
-              { this.state.gridLoaded && 
-              <div style={paginationStyle}> 
-                <Pagination 
-                totalImages={this.state.totalImages} 
-                tags={this.state.tags} 
-                service={this.state.service}
-                onClick={(tags, page) => this.onClick(tags, page)}  
-                currentPage={this.state.currentPage} 
-                /> 
-              </div> }
-            </div> 
-            )
-           }}/>
-
-          <Route exact path="/" render={() => {
-            return(
+            <Route path="/s/:service" render={({ location }) => { 
+              return(
               <div>
-               <h1> Enter tags to search for images. </h1>
-            </div>
-            )
-          }
-          } />
+                <div style={thumbgrid}> 
+                  <Thumbgrid 
+                  imageData={this.state.imageData}
+                  update={this.state.update} 
+                  service={this.state.service}
+                  setTotalImages={(x) => this.setTotalImages(x)} 
+                  page={this.state.currentPage} 
+                  tags={this.state.tags} 
+                  setTags={(x) => this.setTags(x)}
+                  setPage={(x) => this.setPage(x)}
+                  setGridLoaded={x => this.setGridLoaded(x)} 
+                  setUpdate={x => this.setUpdate(x)} location={location}
+                  /> 
+                </div> 
+
+                { this.state.gridLoaded && 
+                <div style={paginationStyle}> 
+                  <Pagination 
+                  totalImages={this.state.totalImages} 
+                  tags={this.state.tags} 
+                  service={this.state.service}
+                  onClick={(tags, page) => this.onClick(tags, page)}  
+                  currentPage={this.state.currentPage} 
+                  /> 
+                </div> }
+              </div> 
+              )
+            }}/>
+
+            <Route path="/" exact render={() => {
+              return(
+                <div>
+                <h1> Enter tags to search for images. </h1>
+              </div>
+              )
+            }
+            } />
+            <Route component={noMatch}/>
+          </Switch>
 
         </div>
       </div>

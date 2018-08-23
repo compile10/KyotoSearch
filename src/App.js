@@ -52,7 +52,8 @@ class Thumbgrid extends React.Component {
 
     this.setUpdate = this.props.setUpdate.bind(this)
     this.setGridLoaded = this.props.setGridLoaded.bind(this)
-    this.setMissingState = this.props.setMissingState.bind(this)
+    this.setTags = this.props.setTags.bind(this)
+    this.setPage = this.props.setPage.bind(this)
   }
 
   getImages(serviceName, unescapedTags, page){
@@ -91,32 +92,46 @@ class Thumbgrid extends React.Component {
       })
   }
 
+    // TODO: add error handling for urls with no query strings
   componentDidMount(){
     this.setUpdate(false)
 
     const params = new URLSearchParams(this.props.location.search) //?tags=tag1+tag2+...
-    let tags = params.get("tags")
-    let page = params.get("page")
-
-
-    document.title = `${convertToTyped(tags)} - waifuSearch`
-
-    //checks if Thumbgrid was loaded in without data. If it was, then grab data from url. If page property is missing then default to page 1.
-    if(page === null)
-    {
-      this.setMissingState('',1)
-    }
-    
-    
-    if(this.props.tags === ''){ 
      
-      this.setMissingState(convertToTyped(tags),page)
-      this.getImages("gelbooru",tags, parseInt(page, 10))
+
+
+    let tags
+    let page
+    
+    
+    if(this.props.page === -1){
+      page = params.get("page")
+      if(page === null){
+        page = 1
+      }
+      else{
+        page = parseInt(page, 10)
+      }
+      this.setPage(page)
     }
     else{
-      this.getImages(this.props.service,this.props.tags, this.props.page)
+      page = this.props.page
     }
+
+    if(this.props.tags === ''){
+      tags = params.get("tags")
+      this.setTags(tags)
+    }
+    else{
+      tags = this.props.tags
+    }
+    document.title = `${convertToTyped(tags)} - waifuSearch`
+    this.getImages("gelbooru", tags, page)
+
   }
+
+  
+
  
  componentDidUpdate(){
 
@@ -182,12 +197,13 @@ class App extends Component{
       totalImages: 0,
       update: false,
       service: 'gelbooru',
-      currentPage: 1,
+      currentPage: -1,
       tags: '',
       gridLoaded: false
     }
   }
   onClick(inTags, inPage){
+    
     this.setState(
       {
         tags: inTags,
@@ -210,11 +226,12 @@ class App extends Component{
     this.setState({update: inUpdate})
   }
   
-  setMissingState(inTags, inPage){
-    this.setState({
-      tags: inTags,
-      currentPage: inPage
-    })
+  setTags(inTags){
+    this.setState({tags: inTags})
+  }
+
+  setPage(inPage){
+    this.setState({currentPage: inPage})
   }
 
 
@@ -248,7 +265,8 @@ class App extends Component{
                 setTotalImages={(x) => this.setTotalImages(x)} 
                 page={this.state.currentPage} 
                 tags={this.state.tags} 
-                setMissingState={(x,y) => this.setMissingState(x,y)}
+                setTags={(x) => this.setTags(x)}
+                setPage={(x) => this.setPage(x)}
                 setGridLoaded={x => this.setGridLoaded(x)} 
                 setUpdate={x => this.setUpdate(x)} location={location}
                 /> 

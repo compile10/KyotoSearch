@@ -200,7 +200,7 @@ class App extends Component{
     this.state = {
       totalImages: 0,
       update: false,
-      service: 'gelbooru',
+      source: 0,
       currentPage: -1,
       tags: '',
       gridLoaded: false
@@ -238,6 +238,10 @@ class App extends Component{
     this.setState({currentPage: inPage})
   }
 
+  setSource(inService){
+    this.setState({source: inService})
+  }
+
 
   render(){
   
@@ -254,7 +258,7 @@ class App extends Component{
     <Router>
       <div>
         <div className="container">
-          <Tagbar service={this.state.service} onClick={(tag, page) => this.onClick(tag, page)}/> 
+          <Tagbar source={this.state.source} setSource={(x) => this.setSource(x)} onClick={(tag, page) => this.onClick(tag, page)}/> 
         </div>
         <div className="container-fluid gridStyle">     
         <Switch>

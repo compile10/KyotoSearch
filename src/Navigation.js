@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
 import { Redirect } from "react-router-dom";
-import convertToURI, {convertToTyped} from './Helper'
+import convertToURI, {convertToTyped, lookupSources} from './Helper'
 
 
 
 const LEFT_PAGE = -1; 
 const RIGHT_PAGE = -2; 
+
+const SOURCES_COUNT = 2;  
 
 class Pagination extends React.Component{
     constructor(props){
@@ -167,13 +169,15 @@ class Pagination extends React.Component{
         return(
           <div className="Tagbar" >
           <div className="row justify-content-center">
-            <div className ="col-lg-4 col-md-5 col-7">
+            <div className ="col-lg-4 col-md-5 col-12">
             <form>
               <input type="text" className="form-control" placeholder="Search Tags" value={this.state.inputvalue} onChange={this.handleChange } onKeyPress={this.enterKey} />
             </form>
             </div>
-            <div className="col-lg-1 col-md-1 col-1">
-              <button type="button" className="btn btn-primary" onClick={() => {this.props.onClick(this.state.inputvalue, 1); this.setState({ click: true}) }} >Search</button>
+             
+            <div className="col-auto">
+              <Dropdown source={this.props.source} setSource={(x) => this.props.setSource(x)}/>
+              <button type="button" style={{marginLeft: "12px"}} className=" d-inline btn btn-primary" onClick={() => {this.props.onClick(this.state.inputvalue, 1); this.setState({ click: true}) }} >Search</button>
             </div>
             </div>
             { this.state.click && <Redirect to={`/s/${this.props.service}/?tags=${convertToURI(this.state.inputvalue)}&page=1`} /> }
@@ -186,13 +190,29 @@ class Pagination extends React.Component{
 class Dropdown extends React.Component{
   constructor(props){
     super(props)
-
   }
 
 
-  render(){
 
-    return( <div></div> )
+  render(){
+    let dropdownOptions = []
+    for(let i = 0; i < SOURCES_COUNT; i++ ){
+        dropdownOptions.push(
+          <button className={"dropdown-item" + (this.props.source === i ? " active" : "")} onClick={() => this.props.setSource(i)} >{lookupSources(i)}</button>
+        )
+      }
+    
+
+    return(
+      <div className="d-inline">
+      <button class="btn btn-secondary  dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown">
+        Sources
+      </button>
+       <div class="dropdown-menu">
+        {dropdownOptions}
+      </div>
+      </div>
+    )
   }
 }
 

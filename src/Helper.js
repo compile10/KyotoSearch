@@ -22,16 +22,16 @@ function convertToTyped(escapedTags){
 }
 
 function lookupSources(code){
-    const sources = ["gelbooru", "danbooru"]
+    const sources = ["Gelbooru", "Danbooru"]
     return sources[code]
 }
 
 function lookupCode(text){
     const codes = {
-        "gelbooru": 1,
-        "danbooru": 2
+        "gelbooru": 0,
+        "danbooru": 1
     }
-    return codes[text]
+    return codes[text.toLowerCase()]
 }
 
 

@@ -126,7 +126,7 @@ class Thumbgrid extends Component {
       tags = this.props.tags
     }
     document.title = `${convertToTyped(tags)} - waifuSearch`
-    this.getImages(0, tags, page)
+    this.getImages(this.props.source, tags, page)
 
   }
 

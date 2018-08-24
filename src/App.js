@@ -37,7 +37,7 @@ class Thumbnail extends React.Component{
 
 
 
-class Thumbgrid extends React.Component {
+class Thumbgrid extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -56,7 +56,7 @@ class Thumbgrid extends React.Component {
     this.setPage = this.props.setPage.bind(this)
   }
 
-  getImages(serviceName, unescapedTags, page){
+  getImages(source, unescapedTags, page){
     this.setGridLoaded(false)
     this.setState({
       loading: true,
@@ -64,7 +64,7 @@ class Thumbgrid extends React.Component {
       imagesLoaded: 0
     })
     var tags = convertToURI(unescapedTags)
-    const Url = `/api/images/${serviceName}/?tags=${tags}&page=${page}`
+    const Url = `/api/images/${source}/?tags=${tags}&page=${page}`
     
     console.log("Calling GET request.")
 
@@ -126,7 +126,7 @@ class Thumbgrid extends React.Component {
       tags = this.props.tags
     }
     document.title = `${convertToTyped(tags)} - waifuSearch`
-    this.getImages("gelbooru", tags, page)
+    this.getImages(0, tags, page)
 
   }
 
@@ -138,7 +138,7 @@ class Thumbgrid extends React.Component {
   if(this.props.update === true){
     document.title = `${this.props.tags} - waifuSearch`
     this.setUpdate(false)
-    this.getImages(this.props.service, this.props.tags, this.props.page)
+    this.getImages(this.props.source, this.props.tags, this.props.page)
   }
 
    if(this.state.imagesLoaded === this.state.imageArray.length && this.state.loading === true && this.state.imageArray.length !== 0){
@@ -206,7 +206,19 @@ class App extends Component{
       gridLoaded: false
     }
   }
-  onClick(inTags, inPage){
+  onClick(inTags, inPage, inSource){
+    
+    this.setState(
+      {
+        tags: inTags,
+        currentPage: inPage,
+        source: inSource,
+        update: true
+      }
+    )
+  }
+
+  onClickPagination(inTags, inPage){
     
     this.setState(
       {
@@ -258,19 +270,19 @@ class App extends Component{
     <Router>
       <div>
         <div className="container">
-          <Tagbar source={this.state.source} setSource={(x) => this.setSource(x)} onClick={(tag, page) => this.onClick(tag, page)}/> 
+          <Tagbar onClick={(tag, page) => this.onClick(tag, page)}/> 
         </div>
         <div className="container-fluid gridStyle">     
         <Switch>
           
-            <Route path="/s/:service" render={({ location }) => { 
+            <Route path="/s/:source" render={({ location }) => { 
               return(
               <div>
                 <div style={thumbgrid}> 
                   <Thumbgrid 
                   imageData={this.state.imageData}
                   update={this.state.update} 
-                  service={this.state.service}
+                  source={this.state.source}
                   setTotalImages={(x) => this.setTotalImages(x)} 
                   page={this.state.currentPage} 
                   tags={this.state.tags} 
@@ -286,8 +298,8 @@ class App extends Component{
                   <Pagination 
                   totalImages={this.state.totalImages} 
                   tags={this.state.tags} 
-                  service={this.state.service}
-                  onClick={(tags, page) => this.onClick(tags, page)}  
+                  source={this.state.source}
+                  onClick={(tags, page) => this.onClickPagination(tags, page)}  
                   currentPage={this.state.currentPage} 
                   /> 
                 </div> }

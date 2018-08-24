@@ -9,7 +9,7 @@ const RIGHT_PAGE = -2;
 
 const SOURCES_COUNT = 2;  
 
-class Pagination extends React.Component{
+class Pagination extends Component{
     constructor(props){
       super(props);
       this.state = {
@@ -114,7 +114,7 @@ class Pagination extends React.Component{
               {paginationArray}
             </ul>
           </div>
-          { this.state.click && <Redirect to={`/s/${this.props.service}/?tags=${convertToURI(this.props.tags)}&page=${this.props.currentPage}`} /> }
+          { this.state.click && <Redirect to={`/s/${lookupSources(this.props.source).toLowerCase()}/?tags=${convertToURI(this.props.tags)}&page=${this.props.currentPage}`} /> }
         </div>
       )
     }
@@ -123,13 +123,14 @@ class Pagination extends React.Component{
   
   
   
-  
-  class Tagbar extends React.Component{
+  //TODO: add handling for blank search 
+  class Tagbar extends Component{
     constructor(props){
       super(props)
       this.state = {
         inputvalue: '',
         click: false,
+        source: 0,
       }
       this.handleChange = this.handleChange.bind(this);
       this.enterKey = this.enterKey.bind(this);
@@ -142,6 +143,10 @@ class Pagination extends React.Component{
       this.setState({
         inputvalue: event.target.value,
       })
+    }
+
+    setSource(thisSource){
+      this.setState({source: thisSource})
     }
   
     enterKey(event){
@@ -176,18 +181,18 @@ class Pagination extends React.Component{
             </div>
              
             <div className="col-auto">
-              <Dropdown source={this.props.source} setSource={(x) => this.props.setSource(x)}/>
-              <button type="button" style={{marginLeft: "12px"}} className=" d-inline btn btn-primary" onClick={() => {this.props.onClick(this.state.inputvalue, 1); this.setState({ click: true}) }} >Search</button>
+              <Dropdown source={this.state.source} setSource={(x) => this.setSource(x)}/>
+              <button type="button" style={{marginLeft: "12px"}} className=" d-inline btn btn-primary" onClick={() => {this.props.onClick(this.state.inputvalue, 1, this.state.source); this.setState({ click: true}) }} >Search</button>
             </div>
             </div>
-            { this.state.click && <Redirect to={`/s/${this.props.service}/?tags=${convertToURI(this.state.inputvalue)}&page=1`} /> }
+            { this.state.click && <Redirect to={`/s/${lookupSources(this.state.source).toLocaleLowerCase()}/?tags=${convertToURI(this.state.inputvalue)}&page=1`} /> }
           </div>
         )
     }
   }
   
 
-class Dropdown extends React.Component{
+class Dropdown extends Component{
   constructor(props){
     super(props)
   }

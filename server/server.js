@@ -31,7 +31,7 @@ app.get('/api/images/:service/', (req, res) => {
   console.log(`Recieved image GET request for ${req.query.tags} on page ${req.query.page} for service ${req.params.service}`);
 
   let url = '';
-  if(req.params.service === 0){ 
+  if(req.params.service === '0'){ 
     url = `https://gelbooru.com/index.php?page=dapi&s=post&q=index&limit=100&tags=${req.query.tags}&pid=${req.query.page - 1}`
   }
 

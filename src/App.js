@@ -200,7 +200,7 @@ class App extends Component{
     this.state = {
       totalImages: 0,
       update: false,
-      source: 0,
+      source: 1,
       currentPage: -1,
       tags: '',
       gridLoaded: false
@@ -270,7 +270,7 @@ class App extends Component{
     <Router>
       <div>
         <div className="container">
-          <Tagbar onClick={(tag, page) => this.onClick(tag, page)}/> 
+          <Tagbar onClick={(tag, page, source) => this.onClick(tag, page, source)}/> 
         </div>
         <div className="container-fluid gridStyle">     
         <Switch>

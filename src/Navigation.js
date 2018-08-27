@@ -130,10 +130,15 @@ class Pagination extends Component{
       this.state = {
         inputvalue: '',
         click: false,
-        source: 0,
-      }
-      this.handleChange = this.handleChange.bind(this);
-      this.enterKey = this.enterKey.bind(this);
+        source: 0
+      };
+
+      this.setPage = this.props.setPage.bind(this)
+      this.setSource = this.props.setSource.bind(this)
+      this.setUpdate = this.props.setUpdate.bind(this)
+      this.setTags = this.props.setTags.bind(this)
+      this.handleChange = this.handleChange.bind(this)
+      this.enterKey = this.enterKey.bind(this)
     }
     setInputvalue(input){
       this.setState({inputvalue: input})
@@ -144,6 +149,15 @@ class Pagination extends Component{
         inputvalue: event.target.value,
       })
     }
+    
+    handleClick(){
+      let page = 1
+      this.props.setPage(page)
+      this.setTags(this.state.inputvalue)
+      this.setSource(this.state.source)
+      this.setUpdate(true)
+      this.setState({ click: true}) 
+    }
 
     setSource(thisSource){
       this.setState({source: thisSource})
@@ -152,8 +166,8 @@ class Pagination extends Component{
     enterKey(event){
       if (event.target.type !== 'textarea' && event.which === 13 /* Enter */) {
         event.preventDefault();
-        this.props.onClick(this.state.inputvalue, 1); 
-        this.setState({click: true})
+        this.handleClick()
+      
   }
     }
     componentDidUpdate(){
@@ -181,8 +195,8 @@ class Pagination extends Component{
             </div>
              
             <div className="col-auto">
-              <Dropdown source={this.state.source} setSource={(x) => this.setSource(x)}/>
-              <button type="button" style={{marginLeft: "12px"}} className=" d-inline btn btn-primary" onClick={() => {this.props.onClick(this.state.inputvalue, 1, this.state.source); this.setState({ click: true}) }} >Search</button>
+              <Dropdown source={this.state.source} setSource={(x) => this.setSource(x)}/>  
+              <button type="button" style={{marginLeft: "12px"}} className=" d-inline btn btn-primary" onClick={this.handleClick} >Search</button>
             </div>
             </div>
             { this.state.click && <Redirect to={`/s/${lookupSources(this.state.source).toLocaleLowerCase()}/?tags=${convertToURI(this.state.inputvalue)}&page=1`} /> }
@@ -192,33 +206,27 @@ class Pagination extends Component{
   }
   
 
-class Dropdown extends Component{
-  constructor(props){
-    super(props)
-  }
+function Dropdown(props){
 
+  let dropdownOptions = []
+  for(let i = 0; i < SOURCES_COUNT; i++ ){
+      dropdownOptions.push(
+        <button key={i} className={"dropdown-item" + (props.source === i ? " active" : "")} onClick={() => props.setSource(i)} >{lookupSources(i)}</button>
+      )
+    }
+  
 
+  return(
+    <div className="d-inline">
+    <button className="btn btn-secondary  dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown">
+      Sources
+    </button>
+      <div className="dropdown-menu">
+      {dropdownOptions}
+    </div>
+    </div>
+  )
 
-  render(){
-    let dropdownOptions = []
-    for(let i = 0; i < SOURCES_COUNT; i++ ){
-        dropdownOptions.push(
-          <button className={"dropdown-item" + (this.props.source === i ? " active" : "")} onClick={() => this.props.setSource(i)} >{lookupSources(i)}</button>
-        )
-      }
-    
-
-    return(
-      <div className="d-inline">
-      <button class="btn btn-secondary  dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown">
-        Sources
-      </button>
-       <div class="dropdown-menu">
-        {dropdownOptions}
-      </div>
-      </div>
-    )
-  }
 }
 
 

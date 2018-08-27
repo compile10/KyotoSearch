@@ -103,7 +103,6 @@ class Thumbgrid extends Component {
     let tags
     let page
     
-    
     if(this.props.page === -1){
       page = params.get("page")
       if(page === null){
@@ -127,6 +126,7 @@ class Thumbgrid extends Component {
     }
     document.title = `${convertToTyped(tags)} - waifuSearch`
     this.getImages(this.props.source, tags, page)
+
 
   }
 
@@ -200,26 +200,27 @@ class App extends Component{
     this.state = {
       totalImages: 0,
       update: false,
-      source: 1,
+      source: 0,
       currentPage: -1,
       tags: '',
       gridLoaded: false
     }
   }
-  onClick(inTags, inPage, inSource){
-    
+  onClick(inTags, inPage, thissource){
+    console.log(thissource)
+    console.log(inTags)
+    console.log(inPage)
     this.setState(
       {
         tags: inTags,
         currentPage: inPage,
-        source: inSource,
+        source: thissource,
         update: true
       }
     )
   }
 
   onClickPagination(inTags, inPage){
-    
     this.setState(
       {
         tags: inTags,
@@ -250,9 +251,11 @@ class App extends Component{
     this.setState({currentPage: inPage})
   }
 
-  setSource(inService){
-    this.setState({source: inService})
+  setSource(inSource){
+    this.setState({source: inSource})
   }
+
+
 
 
   render(){
@@ -270,7 +273,12 @@ class App extends Component{
     <Router>
       <div>
         <div className="container">
-          <Tagbar onClick={(tag, page, source) => this.onClick(tag, page, source)}/> 
+          <Tagbar 
+            setSource={(x) => this.setSource(x)}
+            setPage={(x) => this.setPage(x)}
+            setUpdate={(x) => this.setUpdate(x)}
+            setTags={(x) => this.setTags(x)}
+          /> 
         </div>
         <div className="container-fluid gridStyle">     
         <Switch>

@@ -38,7 +38,7 @@ app.get('/api/images/:service/', (req, res) => {
   
   fetch(url)
   .then( (Data) => {return Data.text()} )
-  .catch(() => {console.log(`Failed to fetch ${req.query.tags} on page ${req.query.page}`)})
+  .catch(() => {console.log(`Failed to fetch ${req.query.tags} on page ${req.query.page} for service ${req.params.service}`)})
   .then((Data) => {
     parseString(Data, (err, result) => {
       if(result.posts.$.count === "0"){

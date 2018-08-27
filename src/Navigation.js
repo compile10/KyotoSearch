@@ -133,10 +133,7 @@ class Pagination extends Component{
         source: 0
       };
 
-      this.setPage = this.props.setPage.bind(this)
-      this.setSource = this.props.setSource.bind(this)
-      this.setUpdate = this.props.setUpdate.bind(this)
-      this.setTags = this.props.setTags.bind(this)
+      this.handleClick = this.handleClick.bind(this)
       this.handleChange = this.handleChange.bind(this)
       this.enterKey = this.enterKey.bind(this)
     }
@@ -152,11 +149,8 @@ class Pagination extends Component{
     
     handleClick(){
       let page = 1
-      this.props.setPage(page)
-      this.setTags(this.state.inputvalue)
-      this.setSource(this.state.source)
-      this.setUpdate(true)
-      this.setState({ click: true}) 
+      this.props.onClick(this.state.inputvalue, page, this.state.source) 
+      this.setState({click: true})
     }
 
     setSource(thisSource){

@@ -206,15 +206,13 @@ class App extends Component{
       gridLoaded: false
     }
   }
-  onClick(inTags, inPage, thissource){
-    console.log(thissource)
-    console.log(inTags)
-    console.log(inPage)
+  onClick(x, y ,z){
+
     this.setState(
       {
-        tags: inTags,
-        currentPage: inPage,
-        source: thissource,
+        tags: x,
+        currentPage: y,
+        source: z,
         update: true
       }
     )
@@ -274,10 +272,7 @@ class App extends Component{
       <div>
         <div className="container">
           <Tagbar 
-            setSource={(x) => this.setSource(x)}
-            setPage={(x) => this.setPage(x)}
-            setUpdate={(x) => this.setUpdate(x)}
-            setTags={(x) => this.setTags(x)}
+            onClick={(x,y,z) => this.onClick(x,y,z)}
           /> 
         </div>
         <div className="container-fluid gridStyle">     

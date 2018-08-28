@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 
 import { Pagination, Tagbar } from './Navigation';
 import Eclipse from './Eclipse';
-import convertToURI, {convertToTyped} from './Helper'
+import convertToURI, {convertToTyped, lookupCode} from './Helper'
 
 import 'animate.css/animate.min.css'
 import './App.css';
@@ -97,11 +97,11 @@ class Thumbgrid extends Component {
     this.setUpdate(false)
 
     const params = new URLSearchParams(this.props.location.search) //?tags=tag1+tag2+...
-     
 
 
     let tags
     let page
+    let source
     
     if(this.props.page === -1){
       page = params.get("page")
@@ -124,8 +124,17 @@ class Thumbgrid extends Component {
     else{
       tags = this.props.tags
     }
+
+    if(this.props.source === -1){
+      source = lookupCode(this.props.urlSource)
+      this.props.setSource(source)
+    }
+    else{
+      source = this.props.source
+    }
+
     document.title = `${convertToTyped(tags)} - waifuSearch`
-    this.getImages(this.props.source, tags, page)
+    this.getImages(source, tags, page)
 
 
   }
@@ -200,7 +209,7 @@ class App extends Component{
     this.state = {
       totalImages: 0,
       update: false,
-      source: 0,
+      source: -1,
       currentPage: -1,
       tags: '',
       gridLoaded: false
@@ -278,7 +287,7 @@ class App extends Component{
         <div className="container-fluid gridStyle">     
         <Switch>
           
-            <Route path="/s/:source" render={({ location }) => { 
+            <Route path="/s/:source" render={({ location, match }) => { 
               return(
               <div>
                 <div style={thumbgrid}> 
@@ -290,8 +299,10 @@ class App extends Component{
                   page={this.state.currentPage} 
                   tags={this.state.tags} 
                   setTags={(x) => this.setTags(x)}
+                  urlSource= {match.params.source}
                   setPage={(x) => this.setPage(x)}
                   setGridLoaded={x => this.setGridLoaded(x)} 
+                  setSource={x => this.setSource(x)}
                   setUpdate={x => this.setUpdate(x)} location={location}
                   /> 
                 </div> 

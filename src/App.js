@@ -7,6 +7,7 @@ import convertToURI, {convertToTyped, lookupCode} from './Helper'
 
 import 'animate.css/animate.min.css'
 import './App.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 
 
@@ -14,19 +15,42 @@ class Thumbnail extends React.Component{
   constructor(props){
     super(props);
     this.imageLoaded = this.props.imageLoaded.bind(this)
+    this.state = {
+      error: false
     }
+    this.onError = this.onError.bind(this);
+    this.imageLoaded = this.imageLoaded.bind(this)
+  }
+  onError(){
+    this.setState({error: true})
+    this.imageLoaded() 
+  }
+  componentDidMount(){
+    if(!this.props.imageData.thumbURL){
+      this.onError()
+    }
+  }
   render(){
       const colStyle = {
         textAlign: "center"
       }
       const aStyle = {
-        height: "200px"
+        height: "130px"
+      }
+      if(this.state.error === true){
+        return(
+          <div className="col-4 col-sm-3 col-md-2 col-lg-1 col-xl-1 img-lg" style={colStyle}>
+            <div style={aStyle}>
+              <FontAwesomeIcon icon="exclamation-triangle" />
+            </div>
+          </div>
+        )
       }
 
       return(
         <div className="col-4 col-sm-3 col-md-2 col-lg-1 col-xl-1 img-lg" style={colStyle}>
-          <a className="mb-4 d-block h-100" rel="noreferrer" target="_blank" style={aStyle} href={this.props.imageData.pageURL} > 
-            <img alt="Thumbnail"  onLoad={() => this.props.imageLoaded()} className="img-fluid animated fadeInUp" src={this.props.imageData.thumbURL}/>
+          <a className="mb-4 d-block h-100" rel="noreferrer" target="_blank"  href={this.props.imageData.pageURL} > 
+            <img alt="Thumbnail"  onError={() => this.onError()} onLoad={() => this.props.imageLoaded()} className="img-fluid animated fadeInUp" src={this.props.imageData.thumbURL}/>
           </a> 
         </div> 
         

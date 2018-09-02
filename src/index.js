@@ -10,5 +10,13 @@ import './index.css';
 import App from './App';
 import registerServiceWorker from './registerServiceWorker';
 
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons'
+
+
+library.add(faExclamationTriangle)
+
+
 ReactDOM.render(<App />, document.getElementById('root'));
 registerServiceWorker();
+

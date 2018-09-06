@@ -19,14 +19,14 @@ class Thumbnail extends React.Component{
       error: false
     }
     this.onError = this.onError.bind(this);
-    this.imageLoaded = this.imageLoaded.bind(this)
+    this.imageLoaded = this.props.imageLoaded.bind(this)
   }
   onError(){
-    this.setState({error: true})
     this.imageLoaded() 
+    this.setState({error: true})
   }
   componentDidMount(){
-    if(!this.props.imageData.thumbURL){
+    if(!this.props.imageData.thumbURL && this.state.error === false){
       this.onError()
     }
   }
@@ -40,9 +40,11 @@ class Thumbnail extends React.Component{
       if(this.state.error === true){
         return(
           <div className="col-4 col-sm-3 col-md-2 col-lg-1 col-xl-1 img-lg" style={colStyle}>
-            <div style={aStyle}>
-              <FontAwesomeIcon icon="exclamation-triangle" />
-            </div>
+            <a className="mb-4 d-block h-100" rel="noreferrer" target="_blank"  href={this.props.imageData.pageURL} > 
+              <div style={aStyle}>
+                <FontAwesomeIcon size="xl" icon="exclamation-triangle" />
+              </div>
+            </a>
           </div>
         )
       }

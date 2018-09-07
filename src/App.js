@@ -33,14 +33,15 @@ class Thumbnail extends React.Component{
         textAlign: "center"
       }
       const aStyle = {
-        height: "130px"
+        height: "130px",
+        verticalAlign: "middle"
       }
       if(this.state.error === true){
         return(
-          <div className="col-4 col-sm-3 col-md-2 col-lg-1 col-xl-1 img-lg" style={colStyle}>
+          <div className="col-4  col-sm-3 col-md-2 col-lg-1 col-xl-1 img-lg" style={colStyle}>
             <a className="mb-4 d-block h-100" rel="noreferrer" target="_blank"  href={this.props.imageData.pageURL} > 
-              <div style={aStyle}>
-                <FontAwesomeIcon size="3x" icon="exclamation-triangle" />
+              <div className="d-flex justify-content-center" style={aStyle}>
+                <FontAwesomeIcon  className="align-self-center" size="3x" icon="exclamation-triangle" />
               </div>
             </a>
           </div>

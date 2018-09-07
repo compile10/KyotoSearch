@@ -73,17 +73,11 @@ class Thumbgrid extends Component {
       imagesLoaded: 0,
       badTagError: false
     }
-    this.setTotalImages = this.props.setTotalImages.bind(this)
-    this.getImages = this.getImages.bind(this)
 
-    this.setUpdate = this.props.setUpdate.bind(this)
-    this.setGridLoaded = this.props.setGridLoaded.bind(this)
-    this.setTags = this.props.setTags.bind(this)
-    this.setPage = this.props.setPage.bind(this)
   }
 
-  getImages(source, unescapedTags, page){
-    this.setGridLoaded(false)
+   getImages = (source, unescapedTags, page) => {
+    this.props.setGridLoaded(false)
     this.setState({
       loading: true,
       imageArray: [],
@@ -113,14 +107,14 @@ class Thumbgrid extends Component {
             totalImages: data.totalImages,
             imageArray: data.imageArray
           })
-          this.setTotalImages(data.totalImages)
+          this.props.setTotalImages(data.totalImages)
         } 
       })
   }
 
     // TODO: add error handling for urls with no query strings
   componentDidMount(){
-    this.setUpdate(false)
+    this.props.setUpdate(false)
 
     const params = new URLSearchParams(this.props.location.search) //?tags=tag1+tag2+...
 
@@ -137,7 +131,7 @@ class Thumbgrid extends Component {
       else{
         page = parseInt(page, 10)
       }
-      this.setPage(page)
+      this.props.setPage(page)
     }
     else{
       page = this.props.page
@@ -145,7 +139,7 @@ class Thumbgrid extends Component {
 
     if(this.props.tags === ''){
       tags = params.get("tags")
-      this.setTags(tags)
+      this.props.setTags(tags)
     }
     else{
       tags = this.props.tags
@@ -172,13 +166,13 @@ class Thumbgrid extends Component {
 
   if(this.props.update === true){
     document.title = `${this.props.tags} - waifuSearch`
-    this.setUpdate(false)
+    this.props.setUpdate(false)
     this.getImages(this.props.source, this.props.tags, this.props.page)
   }
 
    if(this.state.imagesLoaded === this.state.imageArray.length && this.state.loading === true && this.state.imageArray.length !== 0){
      this.setState({loading: false})
-     this.setGridLoaded(true)
+     this.props.setGridLoaded(true)
    }
  
  }

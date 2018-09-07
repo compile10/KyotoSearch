@@ -14,15 +14,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 class Thumbnail extends React.Component{
   constructor(props){
     super(props);
-    this.imageLoaded = this.props.imageLoaded.bind(this)
     this.state = {
       error: false
     }
     this.onError = this.onError.bind(this);
-    this.imageLoaded = this.props.imageLoaded.bind(this)
   }
   onError(){
-    this.imageLoaded() 
+    this.props.imageLoaded() 
     this.setState({error: true})
   }
   componentDidMount(){
@@ -42,7 +40,7 @@ class Thumbnail extends React.Component{
           <div className="col-4 col-sm-3 col-md-2 col-lg-1 col-xl-1 img-lg" style={colStyle}>
             <a className="mb-4 d-block h-100" rel="noreferrer" target="_blank"  href={this.props.imageData.pageURL} > 
               <div style={aStyle}>
-                <FontAwesomeIcon size="xl" icon="exclamation-triangle" />
+                <FontAwesomeIcon size="3x" icon="exclamation-triangle" />
               </div>
             </a>
           </div>
@@ -52,7 +50,7 @@ class Thumbnail extends React.Component{
       return(
         <div className="col-4 col-sm-3 col-md-2 col-lg-1 col-xl-1 img-lg" style={colStyle}>
           <a className="mb-4 d-block h-100" rel="noreferrer" target="_blank"  href={this.props.imageData.pageURL} > 
-            <img alt="Thumbnail"  onError={() => this.onError()} onLoad={() => this.props.imageLoaded()} className="img-fluid animated fadeInUp" src={this.props.imageData.thumbURL}/>
+            <img alt="Thumbnail"  onError={this.onError} onLoad={this.props.imageLoaded} className="img-fluid animated fadeInUp" src={this.props.imageData.thumbURL}/>
           </a> 
         </div> 
         
@@ -177,8 +175,9 @@ class Thumbgrid extends Component {
  
  }
 
- imageLoaded(){
-   this.setState({imagesLoaded: this.state.imagesLoaded + 1 })
+ imageLoaded = () => {
+   console.log("ADDED")
+   this.setState( prevState  => { return {imagesLoaded: prevState.imagesLoaded + 1} } )
  }
 
  render() {
@@ -196,7 +195,7 @@ class Thumbgrid extends Component {
     let thumbRows = [];
 
     for( let i = 0; i < this.state.imageArray.length; i++){
-        thumbRows.push( <Thumbnail index={i} imageLoaded={() => this.imageLoaded()} imageData={this.state.imageArray[i]} key={i}/> )
+        thumbRows.push( <Thumbnail index={i} imageLoaded={this.imageLoaded} imageData={this.state.imageArray[i]} key={i}/> )
     }
 
     return(   

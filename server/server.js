@@ -56,20 +56,47 @@ app.get('/api/images/:service/', (req, res) => {
       })
       break;
     case '1':
-      fetchDanbooru(req.query.tags, req.query.page - 1, res)
+      fetchDanbooru(req.query.tags, req.query.page - 1, res, "danbooru.donmai.us", "Danbooru")
       break;
+    case '2':
+      fetchDanbooru(req.query.tags, req.query.page - 1, res, "safebooru.org", "Safebooru")
+      break; 
     }
 });
   
   
+function parseGelbooru(tags, offset, res, domain, service ){
+  let urls = []
+  for(let i = 1; i <= 5; i++){
+    urls.push(`https://${domain}/index.php?page=dapi&s=post&q=index&limit=20&tags=${tags}&pid=${i + (4 * offset)}`)
+  }
+  fetch(url)
+  .then( res => res.text() )
+  .catch(() => {console.log(`Failed to fetch ${req.query.tags} on page ${offset + 1} for service ${service}`)})
+  .then((Data) => {
+    parseString(Data, (err, result) => {
+      if(result.posts.$.count === "0"){
+        const noResult = {
+          totalImages: 0
+        }
+        res.send(noResult)
+      }
+      else{
+        var parsedResult = parseGelbooru(result)
+        res.send(parsedResult)
+      }
+    })
+  })
+}
 
 
-function parseDanbooru(data, postCount){
+
+function parseDanbooru(data, postCount, domain){
   let images = [];
   for(let thisImage of data){
     images.push({ 
       thumbURL: thisImage.preview_file_url,
-      pageURL: `https://danbooru.donmai.us/posts/${thisImage.id}`
+      pageURL: `https://${domain}/posts/${thisImage.id}`
     });
   }
   parsedResult = {
@@ -81,24 +108,26 @@ function parseDanbooru(data, postCount){
 
 
 
-function fetchDanbooru(tags, offset, res){
+function fetchDanbooru(tags, offset, res, domain, service){
   let urls = []
   for(let i = 1; i <= 5; i++){
-    urls.push(`https://danbooru.donmai.us/posts.json?tags=${tags}&page=${i + (4 * offset)}`)
+    urls.push(`https://${domain}/posts.json?tags=${tags}&page=${i + (4 * offset)}`)
   }
 
   let dataArray = []
-
+  
+ 
   const grabContent = url => fetch(url)
       .then(res => res.json())
-      .then(Data => { dataArray = dataArray.concat(Data)}) 
+
 
   Promise
       .all(urls.map(grabContent))
-      .then(() => console.log(`Danbooru URL Array for ${tags} fetched`))
-      .then(() => fetch(`https://danbooru.donmai.us/counts/posts.json?tags=${tags}`)) 
+      .then((arrays) => arrays.map(array => dataArray.push(...array)) )
+      .then(() => console.log(`${service} URL Array for ${tags} fetched`))
+      .then(() => fetch(`https://${domain}/counts/posts.json?tags=${tags}`)) 
       .then(res => res.json())
-      .then(res => parseDanbooru(dataArray, res.counts.posts))
+      .then(res => parseDanbooru(dataArray, res.counts.posts, domain))
       .then(parsedResult => res.send(parsedResult))
 }
 

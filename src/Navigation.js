@@ -7,7 +7,7 @@ import convertToURI, {convertToTyped, lookupSources} from './Helper'
 const LEFT_PAGE = -1; 
 const RIGHT_PAGE = -2; 
 
-const SOURCES_COUNT = 2;  
+const SOURCES_COUNT = 3;  
 
 class Pagination extends Component{
     constructor(props){

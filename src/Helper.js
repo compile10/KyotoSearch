@@ -22,14 +22,15 @@ function convertToTyped(escapedTags){
 }
 
 function lookupSources(code){
-    const sources = ["Gelbooru", "Danbooru"]
+    const sources = ["Gelbooru", "Danbooru", "Safebooru"]
     return sources[code]
 }
 
 function lookupCode(text){
     const codes = {
         "gelbooru": 0,
-        "danbooru": 1
+        "danbooru": 1,
+        "safebooru": 2,
     }
     return codes[text.toLowerCase()]
 }

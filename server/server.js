@@ -16,9 +16,7 @@ app.get('/api/images/:service/', (req, res) => {
   console.log(`Recieved image GET request for ${req.query.tags} on page ${req.query.page} for service ${req.params.service}`);
 
   let url = '';
-  if(req.params.service === '0'){ 
-    
-  }
+
   switch(req.params.service){
     case '0':
       url = `https://gelbooru.com/index.php?page=dapi&s=post&q=index&limit=100&tags=${req.query.tags}&pid=${req.query.page - 1}`
@@ -68,10 +66,14 @@ function parseGelbooru(data, xmlresult, domain){
       imageArray: images
   }
   
+<<<<<<< HEAD
   return parsedResult;
 }
 
 
+=======
+  /*
+>>>>>>> f49d613f83b59081c4acef5d4f99acd731f5003f
 function parseGelbooru(tags, offset, res, domain, service ){
   let urls = []
   for(let i = 0; i <= 4; i++){ 
@@ -93,6 +95,7 @@ function parseGelbooru(tags, offset, res, domain, service ){
 
 
 }
+<<<<<<< HEAD
 
 */
 function parseGelbooru(data){
@@ -109,6 +112,9 @@ function parseGelbooru(data){
   }
   return parsedResult;
 }
+=======
+*/
+>>>>>>> f49d613f83b59081c4acef5d4f99acd731f5003f
 
 
 function parseDanbooru(data, postCount, domain){

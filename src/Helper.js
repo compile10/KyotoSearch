@@ -32,6 +32,9 @@ function lookupCode(text){
         "danbooru": 1,
         "safebooru": 2,
     }
+    if(codes.hasOwnProperty(text) === false){
+        return -1
+    }
     return codes[text.toLowerCase()]
 }
 

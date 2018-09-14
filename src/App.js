@@ -70,7 +70,8 @@ class Thumbgrid extends Component {
       imageArray: [], 
       totalImages: 0,
       imagesLoaded: 0,
-      badTagError: false
+      badTagError: false,
+      urlError: false
     }
 
   }
@@ -143,27 +144,33 @@ class Thumbgrid extends Component {
     else{
       tags = this.props.tags
     }
-
+    let urlError = false
     if(this.props.source === -1){
       source = lookupCode(this.props.urlSource)
+      if(source === -1){
+        this.setState({urlError: true})
+        urlError = true
+      }
       this.props.setSource(source)
     }
     else{
       source = this.props.source
     }
 
-    document.title = `${convertToTyped(tags)} - waifuSearch`
-    this.getImages(source, tags, page)
+    if(urlError === false){
+      document.title = `${convertToTyped(tags)} - waifuSearch`
+      this.getImages(source, tags, page)
+    }
 
 
   }
 
-  
 
  
  componentDidUpdate(){
-
+  
   if(this.props.update === true){
+    this.setState({urlError: false})
     document.title = `${this.props.tags} - waifuSearch`
     this.props.setUpdate(false)
     this.getImages(this.props.source, this.props.tags, this.props.page)
@@ -182,6 +189,10 @@ class Thumbgrid extends Component {
  }
 
  render() {
+  if(this.state.urlError === true){
+    return(<h1>404: The page you were looking for was not found.</h1>)
+  }
+  
   if(this.state.badTagError === true && this.state.loading === false){
     return(<h1>Unable to find images with tags: {this.props.tags}</h1>)
   }
@@ -198,9 +209,12 @@ class Thumbgrid extends Component {
     for( let i = 0; i < this.state.imageArray.length; i++){
         thumbRows.push( <Thumbnail index={i} imageLoaded={this.imageLoaded} imageData={this.state.imageArray[i]} key={i}/> )
     }
-
+      
+    const thumbgrid = {
+      padding: "60px 0 80px 0"
+    }
     return(   
-    <div>
+    <div style={thumbgrid}>
       <div className={"row align-items-center"} style={this.state.loading ? hidden : null}  >    
         {thumbRows}
       </div>
@@ -287,9 +301,7 @@ class App extends Component{
 
   render(){
   
-    const thumbgrid = {
-      padding: "60px 0 80px 0"
-    }
+  
     const paginationStyle = {
       paddingBottom: "30px",
     }
@@ -310,7 +322,7 @@ class App extends Component{
             <Route path="/s/:source" render={({ location, match }) => { 
               return(
               <div>
-                <div style={thumbgrid}> 
+              
                   <Thumbgrid 
                   imageData={this.state.imageData}
                   update={this.state.update} 
@@ -325,7 +337,7 @@ class App extends Component{
                   setSource={x => this.setSource(x)}
                   setUpdate={x => this.setUpdate(x)} location={location}
                   /> 
-                </div> 
+              
 
                 { this.state.gridLoaded && 
                 <div style={paginationStyle}> 

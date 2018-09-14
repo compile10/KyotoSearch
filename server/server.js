@@ -19,24 +19,7 @@ app.get('/api/images/:service/', (req, res) => {
 
   switch(req.params.service){
     case '0':
-      url = `https://gelbooru.com/index.php?page=dapi&s=post&q=index&limit=100&tags=${req.query.tags}&pid=${req.query.page - 1}`
-      fetch(url)
-      .then( res => res.text() )
-      .catch(() => {console.log(`Failed to fetch ${req.query.tags} on page ${req.query.page} for service ${req.params.service}`)})
-      .then((Data) => {
-        parseString(Data, (err, result) => {
-          if(result.posts.$.count === "0"){
-            const noResult = {
-              totalImages: 0
-            }
-            res.send(noResult)
-          }
-          else{
-            var parsedResult = parseGelbooru(result)
-            res.send(parsedResult)
-          }
-        })
-      })
+      fetchGelbooru(req.query.tags, req.query.page -1, res, "gelbooru.com", "Gelbooru")
       break;
     case '1':
       fetchDanbooru(req.query.tags, req.query.page - 1, res, "danbooru.donmai.us", "Danbooru")
@@ -47,10 +30,9 @@ app.get('/api/images/:service/', (req, res) => {
     }
 });
  
-/* 
-EXPERIMENTAL: MULTIPLE REQUEST GELBBOORU ALGORITHM
 
-function parseGelbooru(data, xmlresult, domain){
+
+function parseGelbooru(data, postCount, domain){
   let images = data.map( thisImage => {
     return { 
       thumbURL: `https://simg3.${domain}/thumbnails/${thisImage.directory}/thumbnail_${thisImage.hash}.jpg`,
@@ -58,46 +40,57 @@ function parseGelbooru(data, xmlresult, domain){
     };
   })
 
-  let snip = xmlresult.slice(xmlresult.search("count="), xmlresult.search("offset="))
-  snip = snip.slice(7, snip.length-2)
+  //let snip = xmlresult.slice(xmlresult.search("count="), xmlresult.search("offset="))
+  //snip = snip.slice(7, snip.length-2)
+  
 
   parsedResult = {
-      totalImages: snip.parseInt(),
+      totalImages: postCount,
       imageArray: images
   }
   
-<<<<<<< HEAD
   return parsedResult;
 }
 
 
-=======
-  /*
->>>>>>> f49d613f83b59081c4acef5d4f99acd731f5003f
-function parseGelbooru(tags, offset, res, domain, service ){
+function fetchGelbooru(tags, offset, res, domain, service ){
   let urls = []
   for(let i = 0; i <= 4; i++){ 
     urls.push(`https://${domain}/index.php?page=dapi&s=post&q=index&limit=20&tags=${tags}&json=1&pid=${i + (4 * offset)}`)
   }
 
   const grabContent = url => fetch(url)
-  .then(res => res.text())
+  .then(res => res.json())
 
   let dataArray = []
 
   Promise
   .all(urls.map(grabContent))
   .then(arrays => arrays.map(array => dataArray.push(...array)) )
-  .then(() => fetch(`https://${domain}/index.php?page=dapi&s=post&q=index&limit=20&tags=${tags}&json=1&pid=${4 * offset}`) )
+  .then(() => fetch(`https://${domain}/index.php?page=dapi&s=post&q=index&limit=0&tags=${tags}&json=0&pid=0`) )
   .then((result) => result.text())
-  .then(xmlresult => parseGelbooru(dataArray, xmlresult, domain) )
-  .then(result => res.send(result))
+  .then((xmlresult) => {
+    parseString(xmlresult, (err, result) => {
+      
+      if(result.posts.$.count === "0"){
+        const noResult = {
+          totalImages: 0
+        }
+        res.send(noResult)
+      }
+      else{
+        var parsedResult = parseGelbooru(dataArray, result.posts.$.count, domain)
+        res.send(parsedResult)
+      }
+    })
+  })
+
+
 
 
 }
-<<<<<<< HEAD
 
-*/
+/*
 function parseGelbooru(data){
   let images = [];
   for(let thisImage of data.posts.post){
@@ -112,10 +105,7 @@ function parseGelbooru(data){
   }
   return parsedResult;
 }
-=======
 */
->>>>>>> f49d613f83b59081c4acef5d4f99acd731f5003f
-
 
 function parseDanbooru(data, postCount, domain){
   let images = [];

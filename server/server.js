@@ -7,10 +7,6 @@ const app = express();
 const port = process.env.PORT || 5000;
 
 
-
-
-
-
 //expects service to be a string with the name of the service, tags to be the tags with '+' seperating them, and page to be the page number starting at 1
 app.get('/api/images/:service/', (req, res) => { 
   console.log(`Recieved image GET request for ${req.query.tags} on page ${req.query.page} for service ${req.params.service}`);
@@ -53,6 +49,8 @@ function parseGelbooru(data, postCount, domain){
 }
 
 
+
+
 function fetchGelbooru(tags, offset, res, domain, service ){
   let urls = []
   for(let i = 0; i <= 4; i++){ 
@@ -90,22 +88,8 @@ function fetchGelbooru(tags, offset, res, domain, service ){
 
 }
 
-/*
-function parseGelbooru(data){
-  let images = [];
-  for(let thisImage of data.posts.post){
-    images.push({ 
-      thumbURL: thisImage.$.preview_url,
-      pageURL: `https://gelbooru.com/index.php?page=post&s=view&id=${thisImage.$.id}`
-    });
-  }
-  parsedResult = {
-      totalImages: parseInt(data.posts.$.count),
-      imageArray: images
-  }
-  return parsedResult;
-}
-*/
+
+
 
 function parseDanbooru(data, postCount, domain){
   let images = [];

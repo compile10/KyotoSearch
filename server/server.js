@@ -21,7 +21,7 @@ app.get('/api/images/:service/', (req, res) => {
       fetchDanbooru(req.query.tags, req.query.page - 1, res, "danbooru.donmai.us", "Danbooru")
       break;
     case '2':
-      fetchDanbooru(req.query.tags, req.query.page - 1, res, "safebooru.org", "Safebooru")
+      fetchGelbooru(req.query.tags, req.query.page - 1, res, "safebooru.org", "Safebooru")
       break; 
     }
 });
@@ -54,7 +54,7 @@ function parseGelbooru(data, postCount, domain){
 function fetchGelbooru(tags, offset, res, domain, service ){
   let urls = []
   for(let i = 0; i <= 4; i++){ 
-    urls.push(`https://${domain}/index.php?page=dapi&s=post&q=index&limit=20&tags=${tags}&json=1&pid=${i + (4 * offset)}`)
+    urls.push(`https://${domain}/index.php?page=dapi&s=post&q=index&limit=20&tags=${tags}&json=1&pid=${i + (5 * offset)}`)
   }
 
   const grabContent = url => fetch(url)
@@ -82,10 +82,6 @@ function fetchGelbooru(tags, offset, res, domain, service ){
       }
     })
   })
-
-
-
-
 }
 
 

@@ -15,30 +15,44 @@ app.get('/api/images/:service/', (req, res) => {
 
   switch(req.params.service){
     case '0':
-      fetchGelbooru(req.query.tags, req.query.page -1, res, "gelbooru.com", "Gelbooru")
+      fetchGelbooru(req.query.tags, req.query.page -1, res, "gelbooru.com", parseGelbooru)
       break;
     case '1':
       fetchDanbooru(req.query.tags, req.query.page - 1, res, "danbooru.donmai.us", "Danbooru")
       break;
     case '2':
-      fetchGelbooru(req.query.tags, req.query.page - 1, res, "safebooru.org", "Safebooru")
+      fetchGelbooru(req.query.tags, req.query.page - 1, res, "safebooru.org", parseSafebooru)
       break; 
     }
 });
  
 
 
-function parseGelbooru(data, postCount, domain){
+function parseGelbooru(data, postCount){
   let images = data.map( thisImage => {
     return { 
-      thumbURL: `https://simg3.${domain}/thumbnails/${thisImage.directory}/thumbnail_${thisImage.hash}.jpg`,
-      pageURL: `https://${domain}/index.php?page=post&s=view&id=${thisImage.id}`
+      thumbURL: `https://simg3.gelbooru.com/thumbnails/${thisImage.directory}/thumbnail_${thisImage.hash}.jpg`,
+      pageURL: `https://gelbooru.com/index.php?page=post&s=view&id=${thisImage.id}`
     };
   })
 
-  //let snip = xmlresult.slice(xmlresult.search("count="), xmlresult.search("offset="))
-  //snip = snip.slice(7, snip.length-2)
+  parsedResult = {
+      totalImages: postCount,
+      imageArray: images
+  }
   
+  return parsedResult;
+}
+
+
+function parseSafebooru(data, postCount){
+  let images = data.map( thisImage => {
+    return { 
+      thumbURL: `https://safebooru.org/thumbnails/${thisImage.directory}/thumbnail_${thisImage.image}`,
+      pageURL: `https://safebooru.org/index.php?page=post&s=view&id=${thisImage.id}`
+    };
+  })
+
 
   parsedResult = {
       totalImages: postCount,
@@ -50,8 +64,7 @@ function parseGelbooru(data, postCount, domain){
 
 
 
-
-function fetchGelbooru(tags, offset, res, domain, service ){
+function fetchGelbooru(tags, offset, res, domain, parser ){
   let urls = []
   for(let i = 0; i <= 4; i++){ 
     urls.push(`https://${domain}/index.php?page=dapi&s=post&q=index&limit=20&tags=${tags}&json=1&pid=${i + (5 * offset)}`)
@@ -77,7 +90,7 @@ function fetchGelbooru(tags, offset, res, domain, service ){
         res.send(noResult)
       }
       else{
-        var parsedResult = parseGelbooru(dataArray, result.posts.$.count, domain)
+        var parsedResult = parser(dataArray, result.posts.$.count)
         res.send(parsedResult)
       }
     })

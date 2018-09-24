@@ -21,11 +21,13 @@ function convertToTyped(escapedTags){
     return tags
 }
 
+//take a source id and return its text
 function lookupSources(code){
     const sources = ["Gelbooru", "Danbooru", "Safebooru"]
     return sources[code]
 }
 
+//take a string with the source name and look up its id. If it does not exist, return -1
 function lookupCode(text){
     const codes = {
         "gelbooru": 0,

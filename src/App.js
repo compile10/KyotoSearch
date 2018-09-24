@@ -314,6 +314,7 @@ class App extends Component{
         <div className="container">
           <Tagbar 
             onClick={(x,y,z) => this.onClick(x,y,z)}
+            source={this.state.source}
           /> 
         </div>
         <div className="container-fluid gridStyle">     

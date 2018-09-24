@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Redirect } from "react-router-dom";
-import convertToURI, {convertToTyped, lookupSources} from './Helper'
+import convertToURI, {convertToTyped, lookupSources, lookupCode} from './Helper'
 
 
 
@@ -157,6 +157,7 @@ class Pagination extends Component{
       this.setState({source: thisSource})
     }
   
+    //executes if the user hits the enter key
     enterKey(event){
       if (event.target.type !== 'textarea' && event.which === 13 /* Enter */) {
         event.preventDefault();
@@ -176,6 +177,12 @@ class Pagination extends Component{
         const searchText = convertToTyped(params.get("tags"))
         this.setState({inputvalue: searchText})
       }
+      const paths = window.location.pathname.split('/')
+      if(paths.length === 4 && paths[2] !== "gelbooru"){
+        this.setState({ source: lookupCode(paths[2]) })
+        
+      }
+      
     }
   
     render(){
@@ -202,6 +209,7 @@ class Pagination extends Component{
 
 function Dropdown(props){
 
+  //Gets the dropdown list by iterating over the lookup function and puts each in a dropdown array
   let dropdownOptions = []
   for(let i = 0; i < SOURCES_COUNT; i++ ){
       dropdownOptions.push(
@@ -209,7 +217,7 @@ function Dropdown(props){
       )
     }
   
-
+  
   return(
     <div className="d-inline">
     <button className="btn btn-secondary  dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown">

@@ -23,6 +23,9 @@ app.get('/api/images/:service/', (req, res) => {
     case '2':
       fetchGelbooru(req.query.tags, req.query.page - 1, res, "safebooru.org", parseSafebooru)
       break; 
+    case '3':
+      fetchMoebooru(req.query.tags, req.query.page - 1, res, "konachan.com", parseKonachan)
+      break;
     }
 });
  
@@ -117,6 +120,22 @@ function parseDanbooru(data, postCount, domain){
 
 
 
+function parseKonachan(data, postCount, domain){
+  let images = [];
+  for(let thisImage of data){
+    images.push({ 
+      thumbURL: thisImage.preview_url,
+      pageURL: `https://${domain}/post/show/${thisImage.id}`
+    });
+  }
+  parsedResult = {
+      totalImages: postCount,
+      imageArray: images
+  }
+  return parsedResult;
+}
+
+
 function fetchDanbooru(tags, offset, res, domain, service){
   let urls = []
   for(let i = 1; i <= 5; i++){
@@ -140,5 +159,79 @@ function fetchDanbooru(tags, offset, res, domain, service){
       .then(parsedResult => res.send(parsedResult))
 }
 
+function fetchGelbooru(tags, offset, res, domain, parser ){
+  let urls = []
+  for(let i = 0; i <= 4; i++){ 
+    urls.push(`https://${domain}/index.php?page=dapi&s=post&q=index&limit=20&tags=${tags}&json=1&pid=${i + (5 * offset)}`)
+  }
+
+  const grabContent = url => fetch(url)
+  .then(res => res.json())
+
+  let dataArray = []
+
+  Promise
+  .all(urls.map(grabContent))
+  .then(arrays => arrays.map(array => dataArray.push(...array)) )
+  .then(() => fetch(`https://${domain}/index.php?page=dapi&s=post&q=index&limit=0&tags=${tags}&json=0&pid=0`) )
+  .then((result) => result.text())
+  .then((xmlresult) => {
+    parseString(xmlresult, (err, result) => {
+      
+      if(result.posts.$.count === "0"){
+        const noResult = {
+          totalImages: 0
+        }
+        res.send(noResult)
+      }
+      else{
+        var parsedResult = parser(dataArray, result.posts.$.count)
+        res.send(parsedResult)
+      }
+    })
+  })
+}
+
+
+
+
+function fetchMoebooru(tags, offset, res, domain, parser){
+  let urls = []
+  for(let i = 1; i <= 5; i++){
+    urls.push(`https://${domain}/post.json?tags=${tags}&page=${i + (4 * offset)}`)
+  }
+
+  let dataArray = []
+  
+ 
+  const grabContent = url => fetch(url)
+      .then(res => res.json())
+
+  Promise
+  .all(urls.map(grabContent))
+  .then(arrays => arrays.map(array => dataArray.push(...array)) )
+  .then(() => fetch(`https://${domain}/post.xml?tags=${tags}&limit=0`) )
+  .then((result) => result.text())
+  .then((xmlresult) => {
+    parseString(xmlresult, (err, result) => {
+      
+      if(result.posts.$.count === "0"){
+        const noResult = {
+          totalImages: 0
+        }
+        res.send(noResult)
+      }
+      else{
+        var parsedResult = parser(dataArray, result.posts.$.count)
+        res.send(parsedResult)
+      }
+    })
+  })
+}
+
 
 app.listen(port, () => console.log(`Listening on port ${port}`));
+
+
+app.listen(port, () => console.log(`Listening on port ${port}`));
+

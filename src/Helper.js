@@ -23,7 +23,7 @@ function convertToTyped(escapedTags){
 
 //take a source id and return its text
 function lookupSources(code){
-    const sources = ["Gelbooru", "Danbooru", "Safebooru"]
+    const sources = ["Gelbooru", "Danbooru", "Safebooru", "Konachan"]
     return sources[code]
 }
 
@@ -33,6 +33,7 @@ function lookupCode(text){
         "gelbooru": 0,
         "danbooru": 1,
         "safebooru": 2,
+        "konachan": 3
     }
     if(codes.hasOwnProperty(text) === false){
         return -1

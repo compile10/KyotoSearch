@@ -222,7 +222,7 @@ function fetchMoebooru(tags, offset, res, domain, parser){
         res.send(noResult)
       }
       else{
-        var parsedResult = parser(dataArray, result.posts.$.count)
+        var parsedResult = parser(dataArray, result.posts.$.count, domain)
         res.send(parsedResult)
       }
     })

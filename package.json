@@ -30,7 +30,8 @@
     "start": "concurrently --kill-others-on-fail \"react-scripts start\" \"nodemon server/server.js\""
   },
   "devDependencies": {
-    "concurrently": "^3.6.1"
+    "concurrently": "^3.6.1",
+    "nodemon": "^1.18.4"
   },
   "license": "MIT"
 }

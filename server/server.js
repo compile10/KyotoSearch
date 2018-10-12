@@ -232,6 +232,3 @@ function fetchMoebooru(tags, offset, res, domain, parser){
 
 app.listen(port, () => console.log(`Listening on port ${port}`));
 
-
-app.listen(port, () => console.log(`Listening on port ${port}`));
-

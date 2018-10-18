@@ -173,6 +173,7 @@ function fetchGelbooru(tags, offset, res, domain, parser ){
   Promise
   .all(urls.map(grabContent))
   .then(arrays => arrays.map(array => dataArray.push(...array)) )
+  .catch((error) => {console.log(`Search not found for ${tags}.`)})
   .then(() => fetch(`https://${domain}/index.php?page=dapi&s=post&q=index&limit=0&tags=${tags}&json=0&pid=0`) )
   .then((result) => result.text())
   .then((xmlresult) => {

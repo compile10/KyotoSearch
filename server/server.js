@@ -156,8 +156,20 @@ function fetchDanbooru(tags, offset, res, domain, service){
       .then(() => fetch(`https://${domain}/counts/posts.json?tags=${tags}`)) 
       .then(result => result.json())
       .then(result => parseDanbooru(dataArray, result.counts.posts, domain))
-      .then(parsedResult => res.send(parsedResult))
-}
+      .then(parsedResult => {
+        if(parsedResult.totalImages === 0){
+          console.log(`Search not found for ${tags}.`)
+          const noResult = {
+            totalImages: 0
+          }
+          res.send(noResult)
+        }
+        else{
+          res.send(parsedResult)
+        }
+      })
+  }
+    
 
 function fetchGelbooru(tags, offset, res, domain, parser ){
   let urls = []
@@ -211,12 +223,14 @@ function fetchMoebooru(tags, offset, res, domain, parser){
   Promise
   .all(urls.map(grabContent))
   .then(arrays => arrays.map(array => dataArray.push(...array)) )
+  .catch(() => console.log(`Eror in moebooru fetch.`))
   .then(() => fetch(`https://${domain}/post.xml?tags=${tags}&limit=0`) )
   .then((result) => result.text())
   .then((xmlresult) => {
     parseString(xmlresult, (err, result) => {
       
       if(result.posts.$.count === "0"){
+        console.log(`Search not found for ${tags}.`)
         const noResult = {
           totalImages: 0
         }

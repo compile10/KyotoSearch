@@ -39,7 +39,7 @@ class Thumbnail extends React.Component{
       if(this.state.error === true){
         return(
           <div className="col-4  col-sm-3 col-md-2 col-lg-1 col-xl-1 img-lg" style={colStyle}>
-            <a className="mb-4 d-block h-100" rel="noreferrer" target="_blank"  href={this.props.imageData.pageURL} > 
+            <a className="mb-4 d-block h-100" rel="noreferrer noopener" target="_blank"  href={this.props.imageData.pageURL} > 
               <div className="d-flex justify-content-center" style={aStyle}>
                 <FontAwesomeIcon  className="align-self-center" size="3x" icon="exclamation-triangle" />
               </div>
@@ -50,7 +50,7 @@ class Thumbnail extends React.Component{
 
       return(
         <div className="col-4 col-sm-3 col-md-2 col-lg-1 col-xl-1 img-lg" style={colStyle}>
-          <a className="mb-4 d-block h-100" rel="noreferrer" target="_blank"  href={this.props.imageData.pageURL} > 
+          <a className="mb-4 d-block h-100" rel="noreferrer noopener" target="_blank"  href={this.props.imageData.pageURL} > 
             <img alt="Thumbnail"  onError={this.onError} onLoad={this.props.imageLoaded} className="img-fluid animated fadeInUp" src={this.props.imageData.thumbURL}/>
           </a> 
         </div> 

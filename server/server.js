@@ -34,7 +34,7 @@ app.get('/api/images/:service/', (req, res) => {
 function parseGelbooru(data, postCount){
   let images = data.map( thisImage => {
     return { 
-      thumbURL: `https://simg3.gelbooru.com/thumbnails/${thisImage.directory}/thumbnail_${thisImage.hash}.jpg`,
+      thumbURL: `https://gelbooru.com/thumbnails/${thisImage.directory}/thumbnail_${thisImage.hash}.jpg`,
       pageURL: `https://gelbooru.com/index.php?page=post&s=view&id=${thisImage.id}`
     };
   })

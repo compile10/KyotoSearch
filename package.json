@@ -4,22 +4,22 @@
   "private": true,
   "proxy": "http://localhost:5000/",
   "dependencies": {
-    "@fortawesome/fontawesome-svg-core": "^1.2.15",
-    "@fortawesome/free-solid-svg-icons": "^5.7.2",
-    "@fortawesome/react-fontawesome": "^0.1.4",
-    "animate.css": "^3.7.0",
+    "@fortawesome/fontawesome-svg-core": "^1.2.25",
+    "@fortawesome/free-solid-svg-icons": "^5.11.2",
+    "@fortawesome/react-fontawesome": "^0.1.5",
+    "animate.css": "^3.7.2",
     "bootstrap": "^4.3.1",
-    "express": "^4.16.4",
+    "express": "^4.17.1",
     "i": "^0.3.6",
     "jquery": "^3.4.1",
-    "node-fetch": "^2.3.0",
+    "node-fetch": "^2.6.0",
     "npm": "^6.10.0",
-    "popper.js": "^1.14.7",
-    "react": "^16.8.4",
-    "react-dom": "^16.8.4",
+    "popper.js": "^1.15.0",
+    "react": "^16.10.2",
+    "react-dom": "^16.10.1",
     "react-router-dom": "^5.0.0",
-    "react-scripts": "^2.1.8",
-    "xml2js": "^0.4.19"
+    "react-scripts": "3.2.0",
+    "xml2js": "^0.4.22"
   },
   "scripts": {
     "startreact": "react-scripts start",
@@ -30,8 +30,8 @@
     "start": "concurrently --kill-others-on-fail \"react-scripts start\" \"nodemon server/server.js\""
   },
   "devDependencies": {
-    "concurrently": "^4.1.0",
-    "nodemon": "^1.18.10"
+    "concurrently": "^4.1.2",
+    "nodemon": "^1.19.3"
   },
   "license": "MIT",
   "browserslist": [

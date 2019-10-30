@@ -50,8 +50,9 @@ function parseGelbooru(data, postCount){
 
 function parseSafebooru(data, postCount){
   let images = data.map( thisImage => {
+    let IMGname = thisImage.image.split(".")[0]
     return { 
-      thumbURL: `https://safebooru.org/thumbnails/${thisImage.directory}/thumbnail_${thisImage.image.substring(0, thisImage.image.length - 3)}jpg`,
+      thumbURL: `https://safebooru.org/thumbnails/${thisImage.directory}/thumbnail_${IMGname}.jpg`,
       pageURL: `https://safebooru.org/index.php?page=post&s=view&id=${thisImage.id}`
     };
   })

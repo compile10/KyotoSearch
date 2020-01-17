@@ -93,7 +93,7 @@ class Thumbgrid extends Component {
 
       if(this.props.source === ''){
         checksource = this.props.urlSource
-        if(!(checksource in source)){
+        if(!(checksource.toUpperCase() in source)){
           this.setState({urlError: true})
           urlError = true
         }

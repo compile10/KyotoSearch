@@ -177,7 +177,7 @@ class Pagination extends Component{
         this.setState({inputvalue: searchText})
       }
       const paths = window.location.pathname.split('/')
-      if(paths.length === 4 && paths[2] !== "gelbooru"){
+      if(paths.length === 4 && paths[2] !== source.GELBOORU){
         this.setState({ source: paths[2] })
         
       }
@@ -212,7 +212,7 @@ function Dropdown(props){
   let dropdownOptions = []
   for(let s in source ){
       dropdownOptions.push(
-        <button key={s} className={"dropdown-item" + (props.source === s ? " active" : "")} onClick={() => props.setSource(s)} >{capitalize(s)}</button>
+        <button key={source[s]} className={"dropdown-item" + (props.source === source[s] ? " active" : "")} onClick={() => props.setSource(source[s])} >{capitalize(source[s])}</button>
       )
     }
   

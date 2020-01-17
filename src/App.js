@@ -34,23 +34,23 @@ class App extends Component{
       gridLoaded: false
     }
   }
-  onClick(x, y ,z){
-
+  
+  onClick(tags, currentPage, source){
     this.setState(
       {
-        tags: x,
-        currentPage: y,
-        source: z,
+        tags,
+        currentPage,
+        source,
         update: true
       }
     )
   }
 
-  onClickPagination(inTags, inPage){
+  onClickPagination(tags, currentPage){
     this.setState(
       {
-        tags: inTags,
-        currentPage: inPage,
+        tags,
+        currentPage,
         update: true
       }
     )
@@ -110,7 +110,6 @@ class App extends Component{
               <div>
               
                   <Thumbgrid 
-                  imageData={this.state.imageData}
                   update={this.state.update} 
                   source={this.state.source}
                   setTotalImages={(x) => this.setTotalImages(x)} 

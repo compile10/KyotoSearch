@@ -9,7 +9,7 @@ import convertToURI, {convertToTyped, lookupCode} from './Helper'
 
 class Thumbgrid extends Component {
     constructor(props) {
-      super(props);
+      super(props)
       this.state = {
         loading: true,
         imageArray: [], 

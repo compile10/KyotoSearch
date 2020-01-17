@@ -28,7 +28,7 @@ class App extends Component{
     this.state = {
       totalImages: 0,
       update: false,
-      source: -1,
+      source: '',
       currentPage: -1,
       tags: '',
       gridLoaded: false

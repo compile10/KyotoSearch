@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import Eclipse from './Eclipse';
 import Thumbnail from './Thumbnail'
 
-import convertToURI, {convertToTyped, lookupCode} from './Helper'
+import convertToURI, {convertToTyped, source} from './Helper'
 
 
 
@@ -21,7 +21,7 @@ class Thumbgrid extends Component {
   
     }
   
-     getImages = (source, unescapedTags, page) => {
+     getImages = (getsource, unescapedTags, page) => {
       this.props.setGridLoaded(false)
       this.setState({
         loading: true,
@@ -29,7 +29,7 @@ class Thumbgrid extends Component {
         imagesLoaded: 0
       })
       var tags = convertToURI(unescapedTags)
-      const Url = `/api/images/${source}/?tags=${tags}&page=${page}`
+      const Url = `/api/images/${getsource}/?tags=${tags}&page=${page}`
       
       console.log("Calling GET request.")
   
@@ -66,7 +66,7 @@ class Thumbgrid extends Component {
   
       let tags
       let page
-      let source
+      let checksource
       
       if(this.props.page === -1){
         page = params.get("page")
@@ -90,21 +90,22 @@ class Thumbgrid extends Component {
         tags = this.props.tags
       }
       let urlError = false
-      if(this.props.source === -1){
-        source = lookupCode(this.props.urlSource)
-        if(source === -1){
+
+      if(this.props.source === ''){
+        checksource = this.props.urlSource
+        if(!(checksource in source)){
           this.setState({urlError: true})
           urlError = true
         }
-        this.props.setSource(source)
+        this.props.setSource(checksource)
       }
       else{
-        source = this.props.source
+        checksource = this.props.source
       }
   
       if(urlError === false){
         document.title = `${convertToTyped(tags)} - waifuSearch`
-        this.getImages(source, tags, page)
+        this.getImages(checksource, tags, page)
       }
   
   

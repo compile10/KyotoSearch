@@ -1,13 +1,12 @@
 import React, { Component } from 'react';
 import { Redirect } from "react-router-dom";
-import convertToURI, {convertToTyped, lookupSources, lookupCode} from './Helper'
+import convertToURI, {convertToTyped,capitalize, source} from './Helper'
 
 
 
 const LEFT_PAGE = -1; 
 const RIGHT_PAGE = -2; 
 
-const SOURCES_COUNT = 4;  
 
 class Pagination extends Component{
     constructor(props){
@@ -114,7 +113,7 @@ class Pagination extends Component{
               {paginationArray}
             </ul>
           </div>
-          { this.state.click && <Redirect to={`/s/${lookupSources(this.props.source).toLowerCase()}/?tags=${convertToURI(this.props.tags)}&page=${this.props.currentPage}`} /> }
+          { this.state.click && <Redirect to={`/s/${this.props.source}/?tags=${convertToURI(this.props.tags)}&page=${this.props.currentPage}`} /> }
         </div>
       )
     }
@@ -130,7 +129,7 @@ class Pagination extends Component{
       this.state = {
         inputvalue: '',
         click: false,
-        source: 0
+        source: source.GELBOORU
       };
 
       this.handleClick = this.handleClick.bind(this)
@@ -179,7 +178,7 @@ class Pagination extends Component{
       }
       const paths = window.location.pathname.split('/')
       if(paths.length === 4 && paths[2] !== "gelbooru"){
-        this.setState({ source: lookupCode(paths[2]) })
+        this.setState({ source: paths[2] })
         
       }
       
@@ -200,7 +199,7 @@ class Pagination extends Component{
               <button type="button" style={{marginLeft: "12px"}} className=" d-inline btn btn-primary" onClick={this.handleClick} >Search</button>
             </div>
             </div>
-            { this.state.click && <Redirect to={`/s/${lookupSources(this.state.source).toLocaleLowerCase()}/?tags=${convertToURI(this.state.inputvalue)}&page=1`} /> }
+            { this.state.click && <Redirect to={`/s/${this.state.source}/?tags=${convertToURI(this.state.inputvalue)}&page=1`} /> }
           </div>
         )
     }
@@ -211,9 +210,9 @@ function Dropdown(props){
 
   //Gets the dropdown list by iterating over the lookup function and puts each in a dropdown array
   let dropdownOptions = []
-  for(let i = 0; i < SOURCES_COUNT; i++ ){
+  for(let s in source ){
       dropdownOptions.push(
-        <button key={i} className={"dropdown-item" + (props.source === i ? " active" : "")} onClick={() => props.setSource(i)} >{lookupSources(i)}</button>
+        <button key={s} className={"dropdown-item" + (props.source === s ? " active" : "")} onClick={() => props.setSource(s)} >{capitalize(s)}</button>
       )
     }
   

@@ -1,4 +1,9 @@
-
+const source = {
+    GELBOORU: 'gelbooru',
+    DANBOORU: 'danbooru',
+    SAFEBOORU: 'safebooru',
+    KONACHAN: 'konachan'
+}
 
 function convertToURI(unescapedTags){
     let tags = unescapedTags.split(' ')
@@ -21,26 +26,10 @@ function convertToTyped(escapedTags){
     return tags
 }
 
-//take a source id and return its text
-function lookupSources(code){
-    const sources = ["Gelbooru", "Danbooru", "Safebooru", "Konachan"]
-    return sources[code]
+function capitalize(s){
+    return s.charAt(0).toUpperCase() + s.slice(1)
 }
+  
 
-//take a string with the source name and look up its id. If it does not exist, return -1
-function lookupCode(text){
-    const codes = {
-        "gelbooru": 0,
-        "danbooru": 1,
-        "safebooru": 2,
-        "konachan": 3
-    }
-    if(codes.hasOwnProperty(text) === false){
-        return -1
-    }
-    return codes[text.toLowerCase()]
-}
-
-
-export {convertToTyped, lookupSources, lookupCode, convertToURI}
+export {convertToTyped, capitalize, convertToURI, source}
 export default convertToURI

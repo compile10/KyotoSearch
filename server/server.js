@@ -14,16 +14,16 @@ app.get('/api/images/:service/', (req, res) => {
   let url = '';
 
   switch(req.params.service){
-    case '0':
+    case 'gelbooru':
       fetchGelbooru(req.query.tags, req.query.page -1, res, "gelbooru.com", parseGelbooru)
       break;
-    case '1':
+    case 'danbooru':
       fetchDanbooru(req.query.tags, req.query.page - 1, res, "danbooru.donmai.us", "Danbooru")
       break;
-    case '2':
+    case 'safebooru':
       fetchGelbooru(req.query.tags, req.query.page - 1, res, "safebooru.org", parseSafebooru)
       break; 
-    case '3':
+    case 'konachan':
       fetchMoebooru(req.query.tags, req.query.page - 1, res, "konachan.com", parseKonachan)
       break;
     }

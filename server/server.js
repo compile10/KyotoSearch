@@ -136,7 +136,7 @@ function parseKonachan(data, postCount, domain){
   return parsedResult;
 }
 
-
+//TODO: Fix posts limit (?)
 function fetchDanbooru(tags, offset, res, domain, service){
   let urls = []
   for(let i = 1; i <= 5; i++){

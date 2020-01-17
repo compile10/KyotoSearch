@@ -34,7 +34,7 @@ class App extends Component{
       gridLoaded: false
     }
   }
-  
+
   onClick(tags, currentPage, source){
     this.setState(
       {
@@ -120,7 +120,8 @@ class App extends Component{
                   setPage={(x) => this.setPage(x)}
                   setGridLoaded={x => this.setGridLoaded(x)} 
                   setSource={x => this.setSource(x)}
-                  setUpdate={x => this.setUpdate(x)} location={location}
+                  setUpdate={x => this.setUpdate(x)} 
+                  location={location}
                   /> 
               
 

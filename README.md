@@ -23,4 +23,4 @@ App.js |        Includes code for page routing as well as initial loaded compone
 Server.js |        Calls apis for diffrent aggrigators and formats them into its own api. Written to make several calls to aggregators concurrently.
 
 
-![main](https://github.com/rafihaque7/arcticsearch/blob/master/MainScreenshot.PNG)
+![main](READMEIMG.gif)

@@ -6,7 +6,7 @@
 
 **How do I install and run the program?**
 
-> Type `npm install` to install necesseary npm packages. Type `npm start` to run both the server and client. You web browser should open to a localhost port running the client. 
+> Type `npm install` to install necesseary npm packages. Type `npm start` to run both the server and client. Your web browser should open to a localhost port running the client. 
 
 
 List of important files | Description

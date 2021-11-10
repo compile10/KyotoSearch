@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import 'animate.css';
 
 class Thumbnail extends Component{
     constructor(props){
@@ -41,7 +42,7 @@ class Thumbnail extends Component{
         return(
           <div className="col-4 col-sm-3 col-md-2 col-lg-1 col-xl-1 img-lg" style={colStyle}>
             <a className="mb-4 d-block h-100" rel="noreferrer noopener" target="_blank"  href={this.props.imageData.pageURL} > 
-              <img alt="Thumbnail"  onError={this.onError} onLoad={this.props.imageLoaded} className="img-fluid animated fadeInUp" src={this.props.imageData.thumbURL}/>
+              <img alt="Thumbnail"  onError={this.onError} onLoad={this.props.imageLoaded} className="img-fluid animate__animated animate__fadeInUp" src={this.props.imageData.thumbURL}/>
             </a> 
           </div> 
           

@@ -1,10 +1,11 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 
-import { Pagination, Tagbar } from './Navigation';
+import Pagination from './Pagination';
+import Tagbar from './Tagbar';
 import Thumbgrid from './Thumbgrid'
 
-import 'animate.css/animate.min.css'
+
 import './App.css';
 
 
@@ -22,7 +23,7 @@ function noMatch(){
 //TODO: add error code for bad URLS (with redirect in grid?)
 //TODO: rewrite search so it updates the page
 
-class App extends Component{
+class App extends React.Component{
   constructor(props){
     super(props);
     this.state = {

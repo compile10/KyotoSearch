@@ -104,7 +104,7 @@ class Thumbgrid extends Component {
       }
   
       if(urlError === false){
-        document.title = `${convertToTyped(tags)} - waifuSearch`
+        document.title = `${convertToTyped(tags)} - KyotoSearch`
         this.getImages(checksource, tags, page)
       }
   
@@ -117,7 +117,7 @@ class Thumbgrid extends Component {
     
     if(this.props.update === true){
       this.setState({urlError: false})
-      document.title = `${this.props.tags} - waifuSearch`
+      document.title = `${this.props.tags} - KyotoSearch`
       this.props.setUpdate(false)
       this.getImages(this.props.source, this.props.tags, this.props.page)
     }

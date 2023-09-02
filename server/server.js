@@ -122,14 +122,12 @@ function fetchDanbooru(tags, offset, res, domain, service){
   
  
   const grabContent = url => fetch(url, requestOptions)
-      .then(console.log(url))
       .then(res => res.json())
 
 
   Promise
       .all(urls.map(grabContent))
       .then(arrays => arrays.map(array => dataArray.push(...array)) )
-      .then(() => console.log(`${service} URL Array for ${tags} fetched`))
       .then(() => fetch(`https://${domain}/counts/posts.json?tags=${tags}`, requestOptions)) 
       .then(result => result.json())
       .then(result => parseDanbooru(dataArray, result.counts.posts, domain))

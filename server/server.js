@@ -10,10 +10,9 @@ const port = process.env.PORT || 4999;
 // Add user agent header for requests that need it
 const userAgent = 'Mozilla/5.0';
 const requestOptions = {
-  method: 'GET', // You can change this to the HTTP method you need
+  method: 'GET', 
   headers: {
-    'User-Agent': userAgent, // Set the User-Agent header
-    // Other headers if needed
+    'User-Agent': userAgent,
   },
 };
 

@@ -7,6 +7,17 @@ const app = express();
 const port = process.env.PORT || 4999;
 
 
+// Add user agent header for requests that need it
+const userAgent = 'Mozilla/5.0';
+const requestOptions = {
+  method: 'GET', // You can change this to the HTTP method you need
+  headers: {
+    'User-Agent': userAgent, // Set the User-Agent header
+    // Other headers if needed
+  },
+};
+
+
 //expects service to be a string with the name of the service, tags to be the tags with '+' seperating them, and page to be the page number starting at 1
 app.get('/api/images/:service/', (req, res) => { 
   console.log(`Recieved image GET request for ${req.query.tags} on page ${req.query.page} for service ${req.params.service}`);
@@ -111,7 +122,8 @@ function fetchDanbooru(tags, offset, res, domain, service){
   let dataArray = []
   
  
-  const grabContent = url => fetch(url)
+  const grabContent = url => fetch(url, requestOptions)
+      .then(console.log(url))
       .then(res => res.json())
 
 
@@ -119,7 +131,7 @@ function fetchDanbooru(tags, offset, res, domain, service){
       .all(urls.map(grabContent))
       .then(arrays => arrays.map(array => dataArray.push(...array)) )
       .then(() => console.log(`${service} URL Array for ${tags} fetched`))
-      .then(() => fetch(`https://${domain}/counts/posts.json?tags=${tags}`)) 
+      .then(() => fetch(`https://${domain}/counts/posts.json?tags=${tags}`, requestOptions)) 
       .then(result => result.json())
       .then(result => parseDanbooru(dataArray, result.counts.posts, domain))
       .then(parsedResult => {

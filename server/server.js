@@ -17,7 +17,7 @@ const requestOptions = {
   },
 };
 
-app.use(express.static(path.join(__dirname, '../dist')));
+app.use(express.static(path.join(__dirname, '..', 'dist')));
 
 //expects service to be a string with the name of the service, tags to be the tags with '+' seperating them, and page to be the page number starting at 1
 app.get('/api/images/:service/', (req, res) => { 
@@ -43,7 +43,14 @@ app.get('/api/images/:service/', (req, res) => {
     console.log(`Error fetching images from ${req.params.service} API: ${error}`);
   }
 });
- 
+
+app.get("/*", (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'dist', 'index.html'), err => {
+      if (err) {
+          console.log(err);
+      }
+  });
+});
 
 
 function parseGelbooru(data, postCount){

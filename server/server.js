@@ -24,21 +24,24 @@ app.get('/api/images/:service/', (req, res) => {
   console.log(`Recieved image GET request for ${req.query.tags} on page ${req.query.page} for service ${req.params.service}`);
 
   let url = '';
-
+  try {
   switch(req.params.service){
-    case 'gelbooru':
-      fetchNewGelbooru(req.query.tags, req.query.page -1, res, "gelbooru.com", parseGelbooru)
-      break;
-    case 'danbooru':
-      fetchDanbooru(req.query.tags, req.query.page - 1, res, "danbooru.donmai.us", "Danbooru")
-      break;
-    case 'safebooru':
-      fetchGelbooru(req.query.tags, req.query.page - 1, res, "safebooru.org", parseSafebooru)
-      break; 
-    case 'konachan':
-      fetchMoebooru(req.query.tags, req.query.page - 1, res, "konachan.com", parseKonachan)
-      break;
-    }
+      case 'gelbooru':
+        fetchNewGelbooru(req.query.tags, req.query.page -1, res, "gelbooru.com", parseGelbooru)
+        break;
+      case 'danbooru':
+        fetchDanbooru(req.query.tags, req.query.page - 1, res, "danbooru.donmai.us", "Danbooru")
+        break;
+      case 'safebooru':
+        fetchGelbooru(req.query.tags, req.query.page - 1, res, "safebooru.org", parseSafebooru)
+        break; 
+      case 'konachan':
+        fetchMoebooru(req.query.tags, req.query.page - 1, res, "konachan.com", parseKonachan)
+        break;
+      }
+  } catch (error) {
+    console.log(`Error fetching images from ${req.params.service} API: ${error}`);
+  }
 });
  
 

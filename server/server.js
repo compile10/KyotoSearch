@@ -1,6 +1,7 @@
 const fetch = require('node-fetch');
 const express = require('express');
 const parseString = require('xml2js').parseString;
+const path = require('path');
 
 
 const app = express();
@@ -16,6 +17,7 @@ const requestOptions = {
   },
 };
 
+app.use(express.static(path.join(__dirname, '../dist')));
 
 //expects service to be a string with the name of the service, tags to be the tags with '+' seperating them, and page to be the page number starting at 1
 app.get('/api/images/:service/', (req, res) => { 

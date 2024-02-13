@@ -27,7 +27,7 @@ app.get('/api/images/:service/', (req, res) => {
   try {
   switch(req.params.service){
       case 'gelbooru':
-        fetchNewGelbooru(req.query.tags, req.query.page -1, res, "gelbooru.com", parseGelbooru)
+        fetchNewGelbooru(req.query.tags, req.query.page - 1, res, "gelbooru.com", parseGelbooru)
         break;
       case 'danbooru':
         fetchDanbooru(req.query.tags, req.query.page - 1, res, "danbooru.donmai.us", "Danbooru")

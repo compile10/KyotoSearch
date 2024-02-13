@@ -9,7 +9,7 @@ const port = process.env.PORT || 4999;
 
 
 // Add user agent header for requests that need it
-const userAgent = 'Mozilla/5.0';
+const userAgent = 'KyotoSearch/1.0';
 const requestOptions = {
   method: 'GET', 
   headers: {

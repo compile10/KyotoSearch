@@ -6,7 +6,7 @@
 
 **How do I install and run the program?**
 
-> Type `npm install` to install necesseary npm packages. Type `npm start` to run both the server and client. Your web browser should open to a localhost port running the client. 
+> Type `npm install` to install necesseary npm packages. Type `npm start` to run both the server and client. Your web browser should open to a localhost port running the client. You can also build the app using npm build to run on a dedicated server or use the included dockerfile. 
 
 **How do I use it?**
 >Usually you need the tag for what you are searching for. For a series it's usually just the series name with underscores in place of spaces. For a character it's usually something like:  character_name_(series_name). If you are unsure, you can visit the page of the aggregator you are looking at and use their autofill. Use safebooru to avoid obscene content. 

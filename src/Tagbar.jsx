@@ -99,7 +99,7 @@ function Dropdown(props){
   
   return(
     <div className="d-inline">
-    <button className="btn btn-secondary  dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown">
+    <button className="btn btn-secondary  dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle='dropdown'>
       Sources
     </button>
       <div className="dropdown-menu">

@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import Pagination from './Pagination';
 import Tagbar from './Tagbar';
 import Thumbgrid from './Thumbgrid'
-
+import ThemeSwitcher from './Theme';
 
 import './App.css';
 
@@ -96,6 +96,7 @@ class App extends React.Component{
     
     return(
     <Router>
+      <ThemeSwitcher />
       <div>
         <div className="container">
           <Tagbar 

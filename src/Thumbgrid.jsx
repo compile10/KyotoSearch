@@ -16,7 +16,8 @@ class Thumbgrid extends Component {
         totalImages: 0,
         imagesLoaded: 0,
         badTagError: false,
-        urlError: false
+        urlError: false,
+        searchError: ''
       }
   
     }
@@ -26,7 +27,8 @@ class Thumbgrid extends Component {
       this.setState({
         loading: true,
         imageArray: [],
-        imagesLoaded: 0
+        imagesLoaded: 0,
+        searchError: ''
       })
       var tags = convertToURI(unescapedTags)
       const Url = `/api/images/${getsource}/?tags=${tags}&page=${page}`
@@ -34,8 +36,11 @@ class Thumbgrid extends Component {
       console.log("Calling GET request.")
   
       return fetch(Url)
-        .then(stream =>  stream.json())
-        .then(data => {
+        .then(async response => {
+          const data = await response.json().catch(() => ({}))
+          if(!response.ok){
+            throw new Error(data.error || `Search failed with HTTP ${response.status}.`)
+          }
           console.log(`Loaded data for ${unescapedTags}`)
           return data
         })
@@ -53,7 +58,15 @@ class Thumbgrid extends Component {
               imageArray: data.imageArray
             })
             this.props.setTotalImages(data.totalImages)
-          } 
+          }
+        })
+        .catch(error => {
+          console.error(error)
+          this.setState({
+            badTagError: false,
+            loading: false,
+            searchError: error.message
+          })
         })
     }
   
@@ -141,6 +154,9 @@ class Thumbgrid extends Component {
     
     if(this.state.badTagError === true && this.state.loading === false){
       return(<h1>Unable to find images with tags: {this.props.tags}</h1>)
+    }
+    if(this.state.searchError !== ''){
+      return(<h1>{this.state.searchError}</h1>)
     }
     else{
       const eclipseContainer = {

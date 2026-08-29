@@ -61,8 +61,8 @@ function parseGelbooru(data, postCount){
     };
   })
 
-  parsedResult = {
-      totalImages: postCount,
+  const parsedResult = {
+      totalImages: parseInt(postCount, 10),
       imageArray: images
   }
   
@@ -193,38 +193,58 @@ function fetchGelbooru(tags, offset, res, domain, parser ){
 }
 
 
-function fetchNewGelbooru(tags, offset, res, domain, parser ){
-  let urls = []
-  for(let i = 0; i <= 4; i++){ 
-    urls.push(`https://${domain}/index.php?page=dapi&s=post&q=index&limit=20&tags=${tags}&json=1&pid=${i + (5 * offset)}`)
+async function fetchNewGelbooru(tags, offset, res, domain, parser ){
+  const url = new URL(`https://${domain}/index.php`)
+  url.searchParams.set('page', 'dapi')
+  url.searchParams.set('s', 'post')
+  url.searchParams.set('q', 'index')
+  url.searchParams.set('limit', '100')
+  url.searchParams.set('tags', tags)
+  url.searchParams.set('json', '1')
+  url.searchParams.set('pid', offset.toString())
+
+  const apiKey = process.env.GELBOORU_API_KEY
+  const userId = process.env.GELBOORU_USER_ID
+  if(apiKey && userId){
+    url.searchParams.set('api_key', apiKey)
+    url.searchParams.set('user_id', userId)
   }
 
-  const grabContent = url => fetch(url)
-  .then(res => res.json())
-
-  let dataArray = []
-
-  Promise
-  .all(urls.map(grabContent))
-  .then(arrays => arrays.map(array => dataArray.push(...array.post)) )
-  .catch((error) => {console.log(`Search not found for ${tags} `)})
-  .then(() => fetch(`https://${domain}/index.php?page=dapi&s=post&q=index&limit=0&tags=${tags}&json=0&pid=0`) )
-  .then((result) => result.text())
-  .then((xmlresult) => {
-    parseString(xmlresult, (err, result) => {
-      
-      if(result.posts.$.count === "0"){
-        const noResult = {
-          totalImages: 0
-        }
-        res.send(noResult)
+  try {
+    const response = await fetch(url.toString(), requestOptions)
+    if(!response.ok){
+      let message = `Gelbooru returned HTTP ${response.status}.`
+      if(response.status === 401){
+        message = apiKey && userId
+          ? 'Gelbooru rejected the configured API credentials.'
+          : 'Gelbooru search requires GELBOORU_API_KEY and GELBOORU_USER_ID on the server.'
       }
-      else{
-        var parsedResult = parser(dataArray, result.posts.$.count)
-        res.send(parsedResult)
-      }
-    })
-  })
+      console.log(`Error fetching Gelbooru images: ${message}`)
+      return res.status(response.status === 401 && !(apiKey && userId) ? 503 : 502).json({ error: message })
+    }
+
+    const result = await response.json()
+    if(result.success === false){
+      const message = result.reason || result.message || 'Gelbooru could not complete the search.'
+      console.log(`Error fetching Gelbooru images: ${message}`)
+      return res.status(502).json({ error: message })
+    }
+
+    // Gelbooru's current JSON response wraps posts and result metadata in an object.
+    // Keep accepting the legacy top-level array so older compatible deployments work too.
+    const posts = Array.isArray(result) ? result : (Array.isArray(result.post) ? result.post : [])
+    const rawCount = result['@attributes'] && result['@attributes'].count
+    const postCount = Number.isFinite(Number(rawCount)) ? Number(rawCount) : posts.length
+
+    if(postCount === 0){
+      return res.json({ totalImages: 0, imageArray: [] })
+    }
+
+    return res.json(parser(posts, postCount))
+  } catch(error) {
+    console.log(`Error fetching images from Gelbooru API: ${error.message}`)
+    return res.status(502).json({ error: 'Unable to reach Gelbooru. Please try again later.' })
+  }
 }
 
 
@@ -269,4 +289,3 @@ function fetchMoebooru(tags, offset, res, domain, parser){
 
 
 app.listen(port, () => console.log(`Listening on port ${port}`));
-

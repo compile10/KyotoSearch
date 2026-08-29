@@ -9,7 +9,7 @@ import convertToURI, {convertToTyped,capitalize, source} from './Helper'
       this.state = {
         inputvalue: '',
         click: false,
-        source: source.GELBOORU
+        source: source.DANBOORU
       };
 
       this.handleClick = this.handleClick.bind(this)
@@ -57,7 +57,7 @@ import convertToURI, {convertToTyped,capitalize, source} from './Helper'
         this.setState({inputvalue: searchText})
       }
       const paths = window.location.pathname.split('/')
-      if(paths.length === 4 && paths[2] !== source.GELBOORU){
+      if(paths.length === 4 && paths[2] !== source.DANBOORU){
         this.setState({ source: paths[2] })
         
       }

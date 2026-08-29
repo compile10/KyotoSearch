@@ -22,3 +22,26 @@ h1{
   text-align: center;
   padding: 60px 0 60px;
 }
+
+.thumbnail-enter {
+  animation: thumbnail-fade-in-up 0.75s ease both;
+  will-change: opacity, transform;
+}
+
+@keyframes thumbnail-fade-in-up {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 24px, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .thumbnail-enter {
+    animation: none;
+  }
+}

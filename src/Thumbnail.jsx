@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import 'animate.css';
 
 class Thumbnail extends Component{
     constructor(props){
@@ -20,6 +19,10 @@ class Thumbnail extends Component{
       }
     }
     render(){
+        const columnClassName = [
+          "col-4 col-sm-3 col-md-2 col-lg-1 col-xl-1 img-lg",
+          this.props.ready ? "thumbnail-enter" : ""
+        ].filter(Boolean).join(" ")
         const colStyle = {
           textAlign: "center"
         }
@@ -29,7 +32,7 @@ class Thumbnail extends Component{
         }
         if(this.state.error === true){
           return(
-            <div className="col-4  col-sm-3 col-md-2 col-lg-1 col-xl-1 img-lg" style={colStyle}>
+            <div className={columnClassName} style={colStyle}>
               <a className="mb-4 d-block h-100" rel="noreferrer noopener" target="_blank"  href={this.props.imageData.pageURL} > 
                 <div className="d-flex justify-content-center" style={aStyle}>
                   <FontAwesomeIcon  className="align-self-center" size="3x" icon="exclamation-triangle" />
@@ -40,9 +43,9 @@ class Thumbnail extends Component{
         }
   
         return(
-          <div className="col-4 col-sm-3 col-md-2 col-lg-1 col-xl-1 img-lg" style={colStyle}>
-            <a className="mb-4 d-block h-100" rel="noreferrer noopener" target="_blank"  href={this.props.imageData.pageURL} > 
-              <img alt="Thumbnail"  onError={this.onError} onLoad={this.props.imageLoaded} className="img-fluid animate__animated animate__fadeInUp" src={this.props.imageData.thumbURL}/>
+          <div className={columnClassName} style={colStyle}>
+            <a className="mb-4 d-block h-100" rel="noreferrer noopener" target="_blank"  href={this.props.imageData.pageURL} >
+              <img alt="Thumbnail" onError={this.onError} onLoad={this.props.imageLoaded} className="img-fluid" src={this.props.imageData.thumbURL}/>
             </a> 
           </div> 
           
@@ -52,4 +55,4 @@ class Thumbnail extends Component{
   
 
 
-  export default Thumbnail; 
+  export default Thumbnail;

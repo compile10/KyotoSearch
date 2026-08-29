@@ -167,9 +167,17 @@ class Thumbgrid extends Component {
       
   
       let thumbRows = [];
-  
+
       for( let i = 0; i < this.state.imageArray.length; i++){
-          thumbRows.push( <Thumbnail index={i} imageLoaded={this.imageLoaded} imageData={this.state.imageArray[i]} key={i}/> )
+          thumbRows.push(
+            <Thumbnail
+              index={i}
+              imageLoaded={this.imageLoaded}
+              imageData={this.state.imageArray[i]}
+              ready={!this.state.loading}
+              key={i}
+            />
+          )
       }
         
       const thumbgrid = {

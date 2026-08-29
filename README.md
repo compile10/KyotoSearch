@@ -8,10 +8,11 @@
 
 > Type `npm install` to install necesseary npm packages. Type `npm start` to run both the server and client. Your web browser should open to a localhost port running the client. You can also build the app using npm build to run on a dedicated server or use the included dockerfile.
 
-Gelbooru may require API authentication. Set `GELBOORU_API_KEY` and `GELBOORU_USER_ID` in the server environment using the values from your Gelbooru account options before running KyotoSearch:
+Gelbooru requires API authentication. Copy `.env.example` to `.env`, then set `GELBOORU_API_KEY` and `GELBOORU_USER_ID` using the values from your Gelbooru account options before running KyotoSearch:
 
 ```sh
-GELBOORU_API_KEY=your_api_key GELBOORU_USER_ID=your_user_id npm start
+cp .env.example .env
+npm start
 ```
 
 **How do I use it?**

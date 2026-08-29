@@ -4,7 +4,8 @@ const fetch = require('node-fetch');
 const express = require('express');
 const parseString = require('xml2js').parseString;
 const path = require('path');
-const { GelbooruError, searchGelbooru } = require('./gelbooru')
+const { pipeline } = require('stream');
+const { GelbooruError, fetchGelbooruThumbnail, searchGelbooru } = require('./gelbooru')
 
 
 const app = express();
@@ -21,6 +22,33 @@ const requestOptions = {
 };
 
 app.use(express.static(path.join(__dirname, '..', 'dist')));
+
+app.get('/api/images/gelbooru/thumbnail/:shard/:thumbnailId', async (req, res) => {
+  try {
+    const thumbnail = await fetchGelbooruThumbnail(req.params.shard, req.params.thumbnailId)
+    const copiedHeaders = ['content-type', 'content-length', 'etag', 'last-modified']
+
+    copiedHeaders.forEach(header => {
+      const value = thumbnail.headers.get(header)
+      if(value) {
+        res.set(header, value)
+      }
+    })
+
+    res.set('Cache-Control', thumbnail.headers.get('cache-control') || 'public, max-age=86400')
+    res.set('X-Content-Type-Options', 'nosniff')
+
+    pipeline(thumbnail.body, res, error => {
+      if(error) {
+        console.log(`Error streaming Gelbooru thumbnail: ${error.message}`)
+      }
+    })
+  } catch(error) {
+    console.log(`Error fetching Gelbooru thumbnail: ${error.message}`)
+    const statusCode = error instanceof GelbooruError ? error.statusCode : 502
+    return res.status(statusCode).json({ error: 'Unable to load Gelbooru thumbnail.' })
+  }
+})
 
 //expects service to be a string with the name of the service, tags to be the tags with '+' seperating them, and page to be the page number starting at 1
 app.get('/api/images/:service/', (req, res) => { 

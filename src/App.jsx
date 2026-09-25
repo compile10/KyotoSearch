@@ -36,11 +36,12 @@ class App extends React.Component{
     }
   }
 
-  onClick(tags, currentPage, source){
+  //New searches always start on the first page
+  onSearch(tags, source){
     this.setState(
       {
         tags,
-        currentPage,
+        currentPage: 1,
         source,
         update: true
       }
@@ -100,7 +101,7 @@ class App extends React.Component{
       <div>
         <div className="container">
           <Tagbar 
-            onClick={(x,y,z) => this.onClick(x,y,z)}
+            onSearch={(tags, source) => this.onSearch(tags, source)}
             source={this.state.source}
           /> 
         </div>

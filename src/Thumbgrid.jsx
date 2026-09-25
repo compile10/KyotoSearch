@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import Eclipse from './Eclipse';
 import Thumbnail from './Thumbnail'
 
-import convertToURI, {convertToTyped, source} from './Helper'
+import convertToURI, {convertToTyped, isValidSource} from './Helper'
 
 
 
@@ -106,7 +106,7 @@ class Thumbgrid extends Component {
 
       if(this.props.source === ''){
         checksource = this.props.urlSource
-        if(!(checksource.toUpperCase() in source)){
+        if(!isValidSource(checksource)){
           this.setState({urlError: true})
           urlError = true
         }

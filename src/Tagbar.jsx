@@ -1,90 +1,50 @@
-import React, { Component } from 'react';
-import { Redirect } from "react-router-dom";
-import convertToURI, {convertToTyped,capitalize, source} from './Helper'
+import React, { useState } from 'react';
+import { useHistory } from "react-router-dom";
+import convertToURI, {convertToTyped, capitalize, isValidSource, source} from './Helper'
 
-  //TODO: add handling for blank search 
-  class Tagbar extends Component{
-    constructor(props){
-      super(props)
-      this.state = {
-        inputvalue: '',
-        click: false,
-        source: source.DANBOORU
-      };
+//Reads the initial search text from the ?tags= query param
+function getInitialTags(){
+  const params = new URLSearchParams(window.location.search)
+  const tags = params.get("tags")
+  return tags ? convertToTyped(tags) : ''
+}
 
-      this.handleClick = this.handleClick.bind(this)
-      this.handleChange = this.handleChange.bind(this)
-      this.enterKey = this.enterKey.bind(this)
-    }
-    setInputvalue(input){
-      this.setState({inputvalue: input})
-    }
+//Reads the initial source from a /s/:source/ path, falling back to Danbooru if it isn't a known source
+function getInitialSource(){
+  const paths = window.location.pathname.split('/')
+  const pathSource = paths.length === 4 ? paths[2] : null
+  return isValidSource(pathSource) ? pathSource : source.DANBOORU
+}
 
-    handleChange(event){
-      this.setState({
-        inputvalue: event.target.value,
-      })
-    }
-    
-    handleClick(){
-      let page = 1
-      this.props.onClick(this.state.inputvalue, page, this.state.source) 
-      this.setState({click: true})
-    }
+//TODO: add handling for blank search
+function Tagbar({ onSearch }){
+  const [inputValue, setInputValue] = useState(getInitialTags)
+  const [currentSource, setCurrentSource] = useState(getInitialSource)
+  const history = useHistory()
 
-    setSource(thisSource){
-      this.setState({source: thisSource})
-    }
-  
-    //executes if the user hits the enter key
-    enterKey(event){
-      if (event.target.type !== 'textarea' && event.which === 13 /* Enter */) {
-        event.preventDefault();
-        this.handleClick()
-      
+  //Runs from both the Search button and pressing enter in the input
+  function handleSubmit(event){
+    event.preventDefault()
+    onSearch(inputValue, currentSource)
+    history.push(`/s/${currentSource}/?tags=${convertToURI(inputValue)}&page=1`)
   }
-    }
-    componentDidUpdate(){
-      if(this.state.click === true){
-        this.setState({click: false})
-      }
-    }
 
-    componentDidMount(){
-      const params = new URLSearchParams(window.location.search)
-      if(params.get("tags") !== null){
-        const searchText = convertToTyped(params.get("tags"))
-        this.setState({inputvalue: searchText})
-      }
-      const paths = window.location.pathname.split('/')
-      if(paths.length === 4 && paths[2] !== source.DANBOORU){
-        this.setState({ source: paths[2] })
-        
-      }
-      
-    }
-  
-    render(){
-        return(
-          <div className="Tagbar" >
-          <div className="row justify-content-center">
-            <div className ="col-lg-4 col-md-5 col-12">
-            <form>
-              <input type="text" className="form-control" placeholder="Search Tags" value={this.state.inputvalue} onChange={this.handleChange } onKeyPress={this.enterKey} />
-            </form>
-            </div>
-             
-            <div className="col-auto">
-              <Dropdown source={this.state.source} setSource={(x) => this.setSource(x)}/>  
-              <button type="button" style={{marginLeft: "12px"}} className=" d-inline btn btn-primary" onClick={this.handleClick} >Search</button>
-            </div>
-            </div>
-            { this.state.click && <Redirect push to={`/s/${this.state.source}/?tags=${convertToURI(this.state.inputvalue)}&page=1`} /> }
-          </div>
-        )
-    }
-  }
-  
+  return(
+    <div className="Tagbar" >
+      <form className="row justify-content-center" onSubmit={handleSubmit}>
+        <div className ="col-lg-4 col-md-5 col-12">
+          <input type="text" className="form-control" placeholder="Search Tags" value={inputValue} onChange={(event) => setInputValue(event.target.value)} />
+        </div>
+
+        <div className="col-auto">
+          <Dropdown source={currentSource} setSource={setCurrentSource}/>
+          <button type="submit" style={{marginLeft: "12px"}} className=" d-inline btn btn-primary" >Search</button>
+        </div>
+      </form>
+    </div>
+  )
+}
+
 
 function Dropdown(props){
 
@@ -92,11 +52,11 @@ function Dropdown(props){
   let dropdownOptions = []
   for(let s in source ){
       dropdownOptions.push(
-        <button key={source[s]} className={"dropdown-item" + (props.source === source[s] ? " active" : "")} onClick={() => props.setSource(source[s])} >{capitalize(source[s])}</button>
+        <button type="button" key={source[s]} className={"dropdown-item" + (props.source === source[s] ? " active" : "")} onClick={() => props.setSource(source[s])} >{capitalize(source[s])}</button>
       )
     }
-  
-  
+
+
   return(
     <div className="d-inline">
     <button className="btn btn-secondary  dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle='dropdown'>

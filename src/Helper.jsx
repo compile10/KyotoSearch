@@ -29,7 +29,12 @@ function convertToTyped(escapedTags){
 function capitalize(s){
     return s.charAt(0).toUpperCase() + s.slice(1)
 }
+
+//Checks that a name (e.g. from the URL) is one of the supported sources
+function isValidSource(name){
+    return Object.values(source).includes(name)
+}
   
 
-export {convertToTyped, capitalize, convertToURI, source}
+export {convertToTyped, capitalize, convertToURI, isValidSource, source}
 export default convertToURI

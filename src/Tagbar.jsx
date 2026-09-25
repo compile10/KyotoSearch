@@ -79,7 +79,7 @@ import convertToURI, {convertToTyped,capitalize, source} from './Helper'
               <button type="button" style={{marginLeft: "12px"}} className=" d-inline btn btn-primary" onClick={this.handleClick} >Search</button>
             </div>
             </div>
-            { this.state.click && <Redirect to={`/s/${this.state.source}/?tags=${convertToURI(this.state.inputvalue)}&page=1`} /> }
+            { this.state.click && <Redirect push to={`/s/${this.state.source}/?tags=${convertToURI(this.state.inputvalue)}&page=1`} /> }
           </div>
         )
     }
